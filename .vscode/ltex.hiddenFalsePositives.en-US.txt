@@ -1,6 +1,0 @@
-{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\Q– Sir Anthony Giddens\\E$"}
-{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QThe main skill to develop is evaluative reasoning, also referred to as *avalutativity*.\\E$"}
-{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QOther skills concern: Extensivity Intensivity\\E$"}
-{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QOther skills concern: Extensivity: Intensivity\\E$"}
-{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QOther skills concern: Extensivity: Intensivity:\\E$"}
-{"rule":"TO_NON_BASE","sentence":"^\\QOther skills concern: Extensivity: generalizing (macro), stimulus invariance, quantification limits Intensivity: understanding (micro), meaning to actions, qualification\\E$"}
