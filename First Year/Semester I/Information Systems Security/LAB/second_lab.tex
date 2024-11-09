@@ -1,0 +1,287 @@
+\section{Second LAB}
+\cite{LAB2}
+
+
+\subsection{OpenSSL Commands}
+
+\begin{table}[H]
+	\centering
+    \begin{tabular}{|p{6cm}|p{3cm}|p{7cm}|}\hline
+        \rowcolor{gray!30}
+		\textbf{Command} & \textbf{Description} & \textbf{Options} \\ \hline
+		\textcolor{Blue}{\texttt{man openssl <command>}} 
+			& 
+			& 
+			\\ \hline
+        \texttt{openssl enc} 
+			& Allows the encryption and decryption of data with several symmetric cipher
+        routines. 
+			& -help; -ciphers; -p
+				\newline -<algorithm>; -nopadK;
+				\newline -K <hexKey>; -iv <hexVector>
+				\newline -in <inputFile>; -out <outputFile>
+				\newline -iter <n>; -pbkdf2; -nosalt
+				\newline -e (default); -d; 
+				\\ \hline
+        \texttt{openssl rand <numBytes>} 
+			& Generates nBytes pseudo-random data.
+			& -hex
+				\newline -out <outputFile>
+			\\ \hline
+        \texttt{openssl genrsa <numBits>} 
+			& Performs simple asymmetric (key pair) operations with the RSA algorithm.
+			& -out <outputFile>
+			\\ \hline
+		\texttt{openssl rsa} 
+			& To manage and use the RSA keys in cryptographic operations.
+			& -in <inputFile>; -out <outputFile>
+				\newline -text; -noout
+				\newline -pubin; -pubout
+			\\ \hline
+		\texttt{openssl ecparam} 
+			& To manage and manipulate the EC algorithm parameters.
+			& -list\_curves
+				\newline -name <curveName>; -genkey
+				\newline -out <outputFile>
+			\\ \hline
+		\texttt{openssl ec} 
+			& To manage and manipulate the EC algorithm keys.
+			& -in <inputFile>; -out <outputFile>
+				\newline -pubin; -pubout
+				\newline -text
+			\\ \hline
+		\texttt{openssl pkeyutl} 
+			\newline\newline \textbf{Supported algorithms:} RSA, DSA, Diffie-Hellmann and Elliptic Curve. \textbf{The order in which the parameters are passed is important.}
+			& Performs asymmetric encryption/decryption, signature/verification, and key exchange, by using various asymmetric algorithms.
+			& -encrypt; -decrypt; -sign; 
+				\newline -verify; -verifyrecover
+				\newline -in <inputFile>; -out <outputFile>
+				\newline -pubin; -inkey <keyFile>
+				\newline -sigfile <signatureFile> (verify)
+			\\ \hline
+		\texttt{openssl dgst <inputFile>} 
+			& Allows to calculate the digest of data using different algorithms.  
+			& -list
+				\newline -<algorithm>; -out <outputFile>
+			\\ \hline
+		\texttt{openssl speed} 
+			& Measures the performance of the various algorithms implemented by OpenSSL
+			& -evp (ctr)
+			\\ \hline
+    \end{tabular}
+
+    \caption{\texttt{openssl} commands}
+
+    \label{tab:openssl}
+\end{table}
+
+\clearpage
+\subsection*{Insights}
+\begin{itemize}
+\item 1 Byte = 2 HEX characters. 
+\item In order to decrypt a file you need to know: iv, K and cipher algorithm.
+\item In practice, if you have an N-Bytes RSA key, you can perform successfully encryption/decryption operations with OpenSSL only if the (plaintext) data is at most N-11 bytes long.
+\item RSA-encrypt \textrightarrow public key.
+\item RSA-decrypt \textrightarrow private key.
+\item RSA-sign \textrightarrow private key.
+\item RSA-verify \textrightarrow public key.
+\item The \texttt{pubin} parameter is used to specify that the input key it has to be a public key.
+\end{itemize}
+
+\subsection{Utility Commands}
+\begin{table}[H]
+	\centering
+    \begin{tabular}{|p{5cm}|p{6cm}|p{5cm}|}\hline
+        \rowcolor{gray!30}
+        \textbf{Command} & \textbf{Description} & \textbf{Options} \\ \hline
+
+		\texttt{systemctl [options] ssh} 
+		& Must be enabled on the Receiver
+			\newline \textbf{Remember to stop it at the end}.
+		& start ; stop ; restart
+			\newline enable ; status 
+		\\ \hline
+
+		\texttt{scp <user>@<ipReceiver>\newline:<dirFullName>} 
+		& Transfers a file to the specified user’s directory
+		& start ; stop ; restart
+			\newline enable ; status 
+		\\ \hline
+
+		\texttt{openssl rand -out <outputFile> <numBytes>} 
+		& Creates a file numBytes long.
+		&
+		\\ \hline
+
+		\texttt{time <openssl\_command>}
+			& Measures the elapsed time of a command.
+			&
+			\\ \hline
+
+		\texttt{expr <arg1> <basicOperation> <arg2>}
+			& Performs basic operations.
+				\newline Such as: \textbackslash* / + - 
+			& 
+			\\ \hline
+		
+		\texttt{wget <URL>}
+			& For non-interactive download of files from the Web.
+			& 
+			\\ \hline
+
+		\texttt{atril <fileName> \&}
+			& A simple multi-page document viewer.
+			& 
+			\\ \hline
+
+		\texttt{sha1sum}
+			& Easy computation of the hash of one or more files.
+			& 
+			\\ \hline
+
+		\texttt{hashdeep <file/dirName>}
+			& Easy computation of the hash of one or more files. Processes recursively the files contained in a directory with a chosen algorithm.
+			& -r; -c <dgstAlgorithm>
+				\newline -m (match)
+				\newline -x (negative match)
+				\newline -k <fileName> (for m or x)
+			\\ \hline
+
+	\end{tabular}
+	\label{tab:utilityCommands}
+	\caption{Utility Commands}
+\end{table}
+\subsection*{Insights}
+\begin{itemize}
+	\item File-transfer protocol: enable ssh server on the receiver (remember to stop it at the end), send the file from the mittent with scp tool.
+	\item Command: \texttt{scp <fileName> <user>@<ipReciever>:/home/<user>/Desktop}
+	\item \textcolor{Blue}{\texttt{scp}: in my case user=Alice or Bob, with their ip provided from \texttt{ifconfig}, password=0000}
+\end{itemize}
+
+\subsection*{Operations with Digests}
+
+\begin{lstlisting}[style=bashStyle]
+	#generate hashes for the files within the "tree" directory and save them to hash_list
+	hashdeep -c sha256 -r tree > hash\_list
+	#check for differences on the same files
+	hashdeep -c sha256 -r -x -k hash list tree
+	
+\end{lstlisting}
+
+%----------------------------------------
+
+\clearpage
+
+\subsection*{Operations on Key Pair}
+
+\begin{lstlisting}[style=bashStyle]
+	#create a key pair and save them to a file
+	openssl genrsa -out rsa.key.Alice 2048 
+	#read the key file
+	openssl rsa -in rsa.key.Alice -text 
+	#extract only the public key and save it to a file
+	openssl rsa -in rsa.key.Alice -out rsa.pubkey.Alice -pubout
+
+	#encrypt a plain text with a public key
+	openssl pkeyutl -encrypt -in plain -out encRSA -pubin -inkey rsa.key.Alice 
+	#decrypt a cipher text encrypted with RSA, knowing the private key
+	penssl pkeyutl -decrypt -in plain.enc.RSA.for.Alice -inkey rsa.key.Alice
+
+	#sign a file ("plain") using the private key of Alice
+	openssl pkeyutl -sign -in plain -inkey rsa.key.Alice -out sig.Alice
+	#verify the signature (on the file "plain") using the public key of Alice
+	openssl pkeyutl -verify -in plain -pubin -inkey rsa.key.Alice -sigfile sig.Alice
+
+	#generate a SECG curve over a 192 bit prime field and save it to a file
+	openssl ecparam -name secp192k1 -genkey -out ec.key.Alice
+	#extract the ec public key from a file and save to another file
+	openssl ec -in ec.key.Alice -pubout -out ec.pubkey.Alice
+
+	#sign a file ("plain") with  ECDSA and save the signature to a file
+	openssl pkeyutl -sign -in plain -inkey ec.key.Alice -out ecsig
+	#verify the signature of the file signed with ECDSA
+	openssl pkeyutl -verify -in plain -pubin -inkey ec.pubkey.Alice -sigfile ecsig
+\end{lstlisting}
+
+\subsection*{Symmetric Algorithms Performances}
+
+Be aware: The real time reported by the time command in the table \ref{tab:symmPerformance} refers to the elapsed wall clock time — the total time from when the command starts executing to when it finishes.
+\newline Creating files: \texttt{openssl rand -out <outputFile> <numBytes>}.
+\newline Measuring elapsed time: \texttt{time <opensslEncryptionCommand>}.
+\begin{table}[H]
+		\centering
+		\begin{tabular}{|p{3cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|}\hline
+	\rowcolor{blue!10}
+	& 100 B & 10 kB & 1 MB & 100 MB \\ \hline
+		des-ede3
+			& 0.01 s
+			& 0.01 s
+			& 0.11 s
+			& 9.91 s
+			\\ \hline
+		
+		aes-128-cbc
+			& 0.01 s
+			& 0.01 s
+			& 0.11 s
+			& 10.21 s
+			\\ \hline
+
+		aes-192-cbc
+			& 0.01 s
+			& 0.01 s
+			& 0.11 s
+			& 10.48 s
+			\\ \hline
+		
+		aes-256-cbc
+			& 0.01 s
+			& 0.01 s
+			& 0.11 s
+			& 10.37 s
+			\\ \hline
+
+		aes-128-ctr
+			& 0.01 s
+			& 0.01 s
+			& 0.14 s
+			& 10.39 s
+			\\ \hline
+
+		chacha20
+			& 0.01 s
+			& 0.01 s
+			& 0.12 s
+			& 9.18 s
+			\\ \hline
+
+	\end{tabular}
+	\caption{Performance of some symmetric encryption algorithms.}
+	\label{tab:symmPerformance}
+\end{table}
+
+\subsection*{Digest Algorithms Performances}
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|p{3cm}|p{2cm}|p{2cm}|p{2cm}|p{2cm}|}\hline
+	\rowcolor{blue!10}
+	& 100 B & 10 kB & 1 MB & 100 MB \\ \hline
+	sha256
+		&  0.01 s
+		&  0.01 s
+		&  0.01 s
+		&  0.12 s
+		\\ \hline
+	
+	sha512
+		&  0.01 s
+		&  0.01 s
+		&  0.02 s
+		&  0.15 s
+		\\ \hline
+
+\end{tabular}
+\caption{Costs associated with some digest algorithms}
+\label{tab:digestAlgorithms}
+\end{table}
+
