@@ -61,8 +61,10 @@
 			\\ \hline
 		\texttt{openssl dgst <inputFile>} 
 			& Allows to calculate the digest of data using different algorithms.  
-			& -list
+			& -list; 
 				\newline -<algorithm>; -out <outputFile>
+				\newline -verify <pub\_key> 
+				\newline -signature <sig\_file>
 			\\ \hline
 		\texttt{openssl speed} 
 			& Measures the performance of the various algorithms implemented by OpenSSL
@@ -104,8 +106,7 @@
 
 		\texttt{scp <user>@<ipReceiver>\newline:<dirFullName>} 
 		& Transfers a file to the specified user’s directory
-		& start ; stop ; restart
-			\newline enable ; status 
+		& -r(ecursive)
 		\\ \hline
 
 		\texttt{openssl rand -out <outputFile> <numBytes>} 

@@ -1,0 +1,124 @@
+\section{Third LAB}
+\cite{LAB3}
+
+The goal of this laboratory is to experiment with the application of the main cryptographic primitives presented in the previous laboratory. The laboratory uses the OpenSSL (http://www.openssl.org/) open-source library and tools, available for various platforms, including Linux and Windows.
+
+\begin{table}[H]
+	\centering
+    \begin{tabular}{|p{6cm}|p{3cm}|p{7cm}|}\hline
+        \rowcolor{gray!30}
+		\textbf{Command} & \textbf{Description} & \textbf{Options} \\ \hline
+		\textcolor{Blue}{\texttt{man openssl <command>}} 
+			& 
+			& 
+        \\ \hline
+
+        openssl crl
+			& Allows to manipulate a Certificate Revocation List (CRL).
+			& -in <file>; -CAfile <file> 
+                \newline -text; -noout
+        \\ \hline
+
+        openssl x509
+            & Sign and view an X.509 certificate.
+            & -inform DER|PEM; -outform DER|PEM
+                \newline -in <file>; -out <file>
+                \newline -noout; -req; -text
+        \\ \hline
+
+        openssl ocsp
+            & Verify the validity of a certificate.
+            & -issuer <file>; -cert <file>
+                \newline -url <URL>
+                \newline -resp\_text
+        \\ \hline
+
+        openssl dhparam
+            & Manipulate and generate DH parameters.
+            & -in <file>; -out <file>
+                \newline -2; -text
+                \newline <num\_bits>
+        \\ \hline
+
+
+    \end{tabular}
+
+    \caption{\texttt{openssl} commands}
+
+\end{table}
+
+\begin{lstlisting}[style=bashStyle]
+    # compute a keyed-digest of a file, using SHA-256
+    openssl dgst -<hash_algorithm> -binary -hmac <key> -out <msg>.hmac <msg>
+    # verify the massage msg, that has been protected with the HMAC calculated above.
+    openssl dgst -<hash_algorithm> -binary -hmac <key> -out <file>.verify <msg>
+    cmp <file>.verify <file>
+\end{lstlisting}
+
+
+\begin{lstlisting}[style=bashStyle]
+    #DIGITAL SIGNATURE
+    #sign (hard)
+    openssl dgst -<hash_algorithm> -binary <msg> > <msg>.hash
+    openssl pkeyutl -sign -in <msg>.hash -inkey <key> -out <msg>.sig
+    #verify
+    openssl dgst -<hash_algorithm> -binary <msg> > <msg>.hash_verifier
+    openssl pkeyutl -verify -in <msg>.hash_verifier -sigfile <msg>.sig -inkey <pub_key> -pubin
+
+    #...but... the easiest way of create/verify signatures with OpenSSL is directly using the command dgst
+    #sign (easy)
+    openssl dgst -<hash_algorithm> -sign <key> -out <msg>.sig <msg>
+    #verify
+    openssl dgst -<hash_algorithm> -verify <pub_key> -signature <msg>.sig <msg>
+
+\end{lstlisting}
+
+\begin{lstlisting}[style=bashStyle]
+    #KEY ESTABLISHMENT process
+    #Alice can use asymmetric encryption to exchange a symmetric key and then use that symmetric key to encrypt the file.
+    #Alice has Bob's public key then performs:
+    openssl enc -<encrypting_algorithm> -in <file> -out <file>.enc -kfile <key_file>
+    openssl pkeyutl -encrypt -in aeskey -pubin -inkey <bob_pub_key> -out <key_file>.enc
+    #Alice sends file.enc + key.enc to Bob, which performs:
+    #decrypt shared key using Bob's private key
+    openssl pkeyutl -decrypt -inkey rsa.key -in aeskey.enc -out aeskey
+    #decrypt file using symmetric algorithm and shared key
+    openssl enc -d -aes-128-cbc -in chap12.pdf.enc -kfile aeskey -out chap12.pdf
+    
+\end{lstlisting}
+
+\textbf{Insights:}
+\begin{itemize}
+    \item To compute a keyed-digest on a message (stored in a file) we use HMAC. On the other hand, Bob in order to verify the keyed-digest must know: the original file, the shared secret key, the digest algorithm (e.g. sha256), the keyed-digest value.
+\end{itemize}
+
+\begin{table}[H]
+	\centering
+    \begin{tabular}{|p{6cm}|p{3cm}|p{7cm}|}\hline
+        \rowcolor{gray!30}
+		\textbf{Command} & \textbf{Description} & \textbf{Options} \\ \hline
+        cmp 
+			& Compare two files byte by byte
+			& -l (verbose); -n <bytes\_limit>
+                \newline -s(ilent)
+        \\ \hline
+
+    \end{tabular}
+
+    \caption{Utility commands}
+
+\end{table}
+
+\section{Digital Certificates}
+\subsection{X.509v3 Certificate}
+
+\begin{lstlisting}[style=bashStyle]
+    #view the content of an X.509 certificate
+    openssl x509 -in <cert_file> -text -noout
+
+    #the Certificate Revocation List (CRL) can be downloaded from the URL provided in the certificate (check the CRL Distribution Points (CDP) field in the certificate details)
+    #same for the OCSP responder (under Authority Information Access field)
+
+    #check the status of the certificate
+    openssl ocsp -issuer <file>.pem -cert <file>.pem -url <URL> -resp_text
+\end{lstlisting}

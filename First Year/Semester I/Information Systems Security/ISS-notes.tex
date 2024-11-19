@@ -1,5 +1,11 @@
-% Twoside implica che i capitoli inizino sempre con la prima pagina a sinistra, eventualmente lasciando una pagina vuota nel capitolo precedente. 
 \documentclass[a4paper, twoside,openright]{report}
+
+%personal additions
+\usepackage{multicol}
+\usepackage[table,xcdraw, dvipsnames]{xcolor}
+\usepackage{tcolorbox}
+\definecolor{lightblue}{RGB}{224, 240, 255}    % Soft blue background
+
 
 % Dimensione dei margini
 \usepackage[a4paper,top=3cm,bottom=3cm,left=3cm,right=3cm]{geometry} 
@@ -25,8 +31,6 @@
 
 % Uso delle immagini
 \usepackage{graphicx}
-% Uso dei colori
-\usepackage[dvipsnames]{xcolor}         
 % Uso dei listing per il codice
 \usepackage{listings}          
 % Per inserire gli hyperlinks tra i vari elementi del testo 
@@ -71,7 +75,7 @@
 }
 
 % Togliendo il commento al comando che segue, si inseriscono nella bibliografia anche le fonti presenti in Bibliography.bib ma non citati direttamente con il comando \cite
-\nocite{*}
+%\nocite{*}
 
 % Margini prima e dopo blocchi di codice, per avere più distanza
 \lstset{aboveskip=20pt,belowskip=20pt}
@@ -91,14 +95,15 @@
 \providecommand*{\listingautorefname}{Listing}
 \providecommand*\lstnumberautorefname{Linea}
 
-%personal additions
-\usepackage{csquotes}
-\usepackage{multicol}
-\usepackage[table,xcdraw]{xcolor}
+
 
 
 \raggedbottom
 
+%other personal additions
+\setcounter{tocdepth}{5}
+\setcounter{secnumdepth}{5}
+\usepackage{csquotes}
 
 
 % -----------------------------------------------------------------
@@ -112,12 +117,19 @@
 
 \include{Lectures/Introduction}
 \include{Lectures/Cryptography}
+\include{Lectures/Authentication}
 \include{Lectures/Sociology}
+\include{Lectures/NetSecurity.tex}
+
 
 \include{LAB/first_lab}
 \include{LAB/second_lab}
+\include{LAB/third_lab}
 
 
 \bibliographystyle{unsrt}
 \bibliography{ISS-notes}
+
+\appendix
+\include{Appendix/AAppendix}
 \end{document}
