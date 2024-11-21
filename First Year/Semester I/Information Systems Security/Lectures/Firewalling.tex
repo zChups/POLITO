@@ -64,7 +64,7 @@ We have two possible choices:
 
 \section*{FW: Basic Components}
 \begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=Beware]
-The Firewall is a system ! With several components.
+The Firewall is a system! With several components.
 \end{tcolorbox}
 
 \begin{itemize}
@@ -74,6 +74,250 @@ The Firewall is a system ! With several components.
     \item \textbf{Dual-homed gateway}: A system with two network cards and routing disabled (ip-forwarding off).
 \end{itemize}
 
-\section*{Control Mechanisms for each Level}
+\begin{tcolorbox}[colback=blue!10!white, colframe=blue!50!white, title=What is a Proxy]
+    A proxy is a system or service that sits between the client and the application server. It intercepts and controls the traffic between the two, often for purposes such as filtering, caching, security, or access control.
+\end{tcolorbox}
+
+\section{Control Mechanisms for each Level}
+To provide a clear and structured explanation of the different controls at various network levels, here’s an overview of each control type along with a comparison of how they differ in terms of:
+\begin{itemize}
+    \item Controls to be performed (i.e., threats detected).
+    \item Performance.
+    \item Protection of the firewall OS.
+    \item Keeping or breaking the client-server model (where breaking means no direct communication between client and server).
+\end{itemize}
+
+\noindent Different controls at various network levels:
+\begin{itemize}
+    \item (Static) packet filter.
+    \item Stateful/stateless (dynamic) packet filter.
+    \item Cutoff proxy.
+    \item Circuit-level gateway / proxy.
+    \item Application-level gateway / proxy.
+    \item Stateful inspection.
+\end{itemize}
+
+\begin{figure}[H]
+  \includegraphics[width=\linewidth]{Images/Firewalling/levels.png}
+  \caption{Controls for each level.}
+\end{figure}
+
+\subsection{Packet Filter}
+\begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=Beware]
+    Order is important (first match principle).
+\end{tcolorbox}
+\begin{itemize}
+    \item Historically available on routers, nowadays found in almost every OS.
+    \item Performs packet inspection at the network level.
+    \item Inspects the IP header.
+    \item Inspects the transport header.
+    \item Rule examples:
+    \begin{itemize}
+        \item Permit incoming connections to our web server:
+        \begin{quote}
+            \texttt{src any dst 10.1.2.3/0.0.0.0 tcp 80 allow}
+        \end{quote}
+        \item Only our internal DNS server can query external DNS servers:
+        \begin{quote}
+            \texttt{src 10.1.2.1/0.0.0.0 dst any udp 53 allow}
+        \end{quote}
+    \end{itemize}
+\end{itemize}
+
+\begin{itemize}
+    \item \textbf{Pros:}
+    \begin{itemize}
+        \item Independent of applications.
+        \item Good scalability.
+        \item Good performance.
+        \item Low cost (available on routers and in many OS).
+    \end{itemize}
+    \item \textbf{Cons:}
+    \begin{itemize}
+        \item Approximate controls: easy to "fool" (e.g., IP spoofing, fragmented packets).
+        \item Difficult to support services with dynamically allocated ports (e.g., FTP).
+        \item Complex to configure (and understand the configuration sometimes).
+        \item Difficult to perform user authentication.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Application-level Gateway}
+Composed of a set of proxies (collection of elements) inspecting the packet payload at the application level:
+\begin{itemize}
+    \item Often requires modifications to the client application.
+    \item May optionally mask or renumber the internal IP addresses.
+    \item When used as part of a firewall, usually performs peer authentication.
+    \item Provides top security (e.g., protects against buffer overflow vulnerabilities in the target application).
+    \item Difference between forward proxy (egress) and reverse proxy (ingress).
+    \item Rule example:
+    \begin{quote}
+        \texttt{deny dangerous HTTP methods "PUT, DELETE deny"}
+    \end{quote}
+    \item SMP (Symmetric Multiprocessing) may improve performance.
+\end{itemize}
+
+\begin{itemize}
+    \item \textbf{Pros:}
+    \begin{itemize}
+        \item Rules are more fine-grained and simpler compared to those of a packet filter.
+        \item Provides more protection for the server.
+        \item May authenticate the client.
+    \end{itemize}
+    \item \textbf{Cons:}
+    \begin{itemize}
+        \item Every application requires a specific proxy.
+        \item Delay in supporting new applications.
+        \item Heavy on resources (many processes).
+        \item Low performance (due to user-mode processes).
+        \item Completely breaks the client/server model.
+        \item Not transparent to the client.
+        \item The proxy's OS may be vulnerable to attacks.
+        \item Problems with Application-Level Security Techniques that Do Not Permit Traffic Inspection (e.g., TLS)
+    \end{itemize}
+\end{itemize}
+
+\textbf{Variants of Application-level Gateway:}
+\begin{itemize}
+    \item \textbf{Transparent Proxy:}
+    \begin{itemize}
+        \item Less intrusive for the client.
+        \item Requires additional work (packet rerouting and destination extraction).
+    \end{itemize}
+    \item \textbf{Strong Application Proxy:}
+    \begin{itemize}
+        \item Checks semantics, not just syntax.
+        \item Only some commands/data are forwarded, based on deeper inspection.
+        \item This is the only correct configuration for a proxy in cases requiring high security.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Circuit-level Gateway}
+\textbf{Generic Proxy (i.e., not "Application-Aware")}
+\begin{itemize}
+    \item Creates a transport-level circuit between the client and server.
+    \item Does not understand or manipulate the payload data in any way.
+    \item Simply copies TCP segments or UDP datagrams between its two interfaces, provided they match the access control rules.
+    \item Re-assembles the IP packets, which helps provide protection against some Layer 3 (L3) and Layer 4 (L4) attacks.
+    \item Breaks the TCP/UDP-level client/server model during the connection.
+    \item Provides more protection for the server.
+    \begin{itemize}
+        \item Isolated from attacks related to the TCP handshake.
+        \item Isolated from attacks related to IP fragmentation.
+    \end{itemize} 
+    \item May authenticate the client, but this requires modification to the application.
+    \item Exhibits many limitations of a packet filter.
+    \item \textbf{SOCKS} is one of the most well-known examples of a generic proxy.
+\end{itemize}
+
+\subsection{HTTP Proxy}
+\begin{center}
+    \textbf{Forward Proxy}
+\end{center}
+
+\begin{itemize}
+\item {HTTP Server Acting as a Front-End:}
+\item Acts as an egress control, passing requests to the real (external) server.
+\item \textbf{Benefits} (in addition to network ACLs):
+\begin{itemize}
+    \item Shared cache of external pages for all internal users.
+    \item Authentication and authorization of internal users.
+    \item Various controls, such as allowed sites, transfer direction, data types, etc.
+\end{itemize}
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/Firewalling/forward_proxy.png}
+    \caption{Forward proxy example.}
+\end{figure}
+    
+\begin{center}
+    \textbf{Reverse Proxy}
+\end{center} 
+
+\begin{itemize}
+    \item Acts as a front-end for the real server(s), forwarding requests to them.
+    \item Implements network ACL and content inspection.
+    \item \textbf{Additional Benefits:}
+    \begin{itemize}
+        \item Obfuscation: Hides information about the real server(s).
+        \item TLS Accelerator: Handles TLS encryption, leaving unprotected connections between the proxy and the backend servers.
+        \item Load Balancer.
+        \item Web Accelerator: Caches static content.
+        \item Compression.
+        \item Spoon Feeding: Retrieves a full dynamic page from the backend server and delivers it to the client based on its speed, offloading the application server.
+    \end{itemize}
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/Firewalling/reverse_proxy.png}
+    \caption{Reverse proxy example.}
+\end{figure}
+
+\subsection{WAF}
+\begin{center}
+(Web Application Firewall)
+\end{center}
+
+The large use of web applications leads to an increase in threats targeting them.
+\begin{itemize}
+    \item A WAF is a module installed at a proxy (either forward and/or reverse) to filter application traffic.
+    \item Filters the following types of traffic:
+    \begin{itemize}
+        \item HTTP commands.
+        \item HTTP request/response headers.
+        \item HTTP request/response content.
+    \end{itemize}
+    \item \textbf{ModSecurity:}
+    \begin{itemize}
+        \item A popular plugin for Apache and NGINX, which power about 50\% and 30\% of worldwide HTTP servers, respectively.
+        \item Includes the \textbf{OWASP ModSecurity Core Rule Set (CRS)} to protect against a wide range of attacks.
+    \end{itemize}
+\end{itemize}
+
+\section{Firewall Architectures}
+\subsection{Packet Filter}
+
+\begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=Beware]
+    Simple, cost-effective, but... insecure!
+\end{tcolorbox}
+
+\begin{itemize}
+    \item Exploits the packet filter to screen traffic at both the IP and upper layers.
+    \item The Packet Filter element represents a single point of failure.
+    \item If implemented with a router, it becomes a "screening router," eliminating the need for additional dedicated hardware.
+    \item No need for a proxy, thus no modification of applications is required.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/Firewalling/packet_filter.png}
+    \caption{Packet filter architecture.}
+\end{figure}
+
+\subsection{Dual-homed Gateway}
+\begin{itemize}
+    \item Easy to implement.
+    \item Small additional hardware requirements.
+    \item The internal network can be masqueraded.
+    \item Inflexible: The packet filter cannot easily adapt to changing network requirements or policies, and it does not provide much flexibility in managing traffic.
+    \item High work overhead.
+    \item The packet filter element performs an initial screening of the traffic.
+    \item The gateway could become a bottleneck, reducing the overall performance of the system.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/Firewalling/dual_homed_gateway.png}
+    \caption{Dual-homed gateway architecture.}
+\end{figure}
+
+\subsection{Screened Host}
 
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/Firewalling/screened_host.png}
+    \caption{Screened host architecture.}
+\end{figure}
