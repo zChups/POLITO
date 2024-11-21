@@ -1409,7 +1409,7 @@ Scenarios, conditions, or environments where the IPsec protocol can be used effe
     \item Therefore, IPsec is used in \textbf{"closed" groups} (it cannot be public, but new users can be registered).
 \end{itemize}
 
-\section{IP (in)security}
+\section{IP (In)security}
 \begin{itemize}
     \item IP addresses are not authenticated.
     \item Packets are not protected in terms of:
@@ -1422,7 +1422,7 @@ Scenarios, conditions, or environments where the IPsec protocol can be used effe
     \item As a result, all protocols that use IP as their carrier are vulnerable to attacks, with a particular impact on "service" protocols (i.e., non-application protocols, such as ICMP, IGMP, DNS, RIP, etc.).
 \end{itemize}
 
-\section{ICMP security}
+\section{ICMP Security}
 \textbf{Internet Control Message Protocol (ICMP)}: A vital protocol for network management and diagnostics.
 \begin{itemize}
     \item Many attacks are possible because ICMP lacks authentication and security measures.
@@ -1439,3 +1439,59 @@ Scenarios, conditions, or environments where the IPsec protocol can be used effe
 \begin{tcolorbox}[colback=blue!10!white, colframe=blue!50!white, title=ICMP and IPsec]
 ICMP is used for global purposes, so IPsec cannot be implemented with it (since IPsec is intended for use in "closed" groups).
 \end{tcolorbox}
+
+\section{DNS Security}
+\begin{center}
+    (Domain Name System)
+\end{center}
+
+\begin{itemize}
+    \item \textbf{Translation}: 
+    \begin{itemize}
+        \item From names to IP addresses
+        \item From IP addresses to names
+    \end{itemize}
+    \item Vital service
+    \item Queries over port 53/UDP
+    \item Zone transfers over port 53/TCP
+    \item No built-in security: \textbf{DNSSEC} (DNS Security Extensions) is under development/deployment to provide security features.
+\end{itemize}
+
+\subsection{DNS Architecture}
+\begin{center}
+    (Architecture of Iterative Query)
+\end{center}
+
+In an \textit{iterative query} in the context of DNS (Domain Name System), the client (typically a resolver) queries a DNS server, which either provides an answer or refers the client to another server that may have the answer. The process involves the following steps:
+
+\begin{itemize}
+    \item \textbf{Client (Resolver)}: The client initiates the query by contacting a DNS server.
+    \item \textbf{DNS Server (Initial Resolver)}: If the server knows the answer (i.e., it has the requested record in its cache or database), it returns the result to the client. If it doesn’t know the answer, it provides a \textit{referral} to another DNS server (usually a higher-level server, such as a root DNS server or an authoritative server for a particular domain).
+    \item \textbf{Referral Process}: The client then contacts the referred server, which either provides the answer or refers the client further (if necessary). This process repeats until the client either gets the final answer or encounters a server that has authoritative data for the queried domain.
+    \item \textbf{No Recursion by Server}: In an iterative query, the DNS server does \textit{not} perform recursion. It only returns what it knows or refers to other servers. The client is responsible for following the chain of referrals.
+\end{itemize}
+
+In summary, in iterative querying, the DNS resolver follows the chain of referrals to find the requested information. Each server in the chain only provides the best answer it can (either the requested data or a referral to another server), and the client handles further queries until the answer is found.
+
+\begin{figure}[H]
+  \includegraphics[width=\linewidth]{Images/NetSec/dns_architecture.png}
+  \caption{DNS architecture for iterative query.}
+\end{figure}
+
+\subsection{DNS Shadow Server}
+A DNS shadow server is a type of DNS server used for security, monitoring or malicious purposes. It is designed to closely mimic an authoritative DNS server but operates in the background without directly interacting with client queries.
+
+\hfill
+
+
+\textbf{Main passages of attacks:}
+\begin{itemize}
+    \item Sniffing to intercept queries.
+    \item Spoofing to generate fake answers (e.g., Denial of Service or traffic redirection to fake sites).
+\end{itemize}
+
+If the attack occurs between nameservers, it can lead to a Distributed Denial of Service (DDoS) attack.
+\begin{figure}[H]
+  \includegraphics[width=\linewidth]{Images/NetSec/dns_shadow_server.png}
+  \caption{DNS shadow server usages.}
+\end{figure}

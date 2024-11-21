@@ -1,0 +1,79 @@
+\chapter{Firewall and IDS/IPS}
+\cite{05_Firewalling}
+
+\section*{What is a Firewall?}
+Literally, a firewall is a ‘wall to protect against fire propagation’ (a safety feature designed to compartmentalize fire and limit damage). In the context of computer networks, it guarantees a controlled connection between networks at different security levels, serving as boundary protection and a network filter.
+
+\section{Ingress vs. Egress Firewall}
+\begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=Beware]
+    Bidirectional protection is essential. This concept involves protecting both incoming (ingress) and outgoing (egress) network traffic to ensure comprehensive security.
+\end{tcolorbox}
+
+\textbf{The Ingress Firewall:}
+\begin{itemize}
+    \item Is intended for \textbf{incoming} connections.
+    \item Typically, \textbf{controls access} to the (public) services offered by your network or system.
+\end{itemize}
+
+\textbf{The Egress Firewall:}
+\begin{itemize}
+    \item Is intended for \textbf{outgoing} connections.
+    \item Typically, used to \textbf{monitor and control} the activity of internal personnel or devices (to prevent unauthorized traffic, and also for privacy and data protection).
+\end{itemize}
+
+\begin{tcolorbox}[colback=blue!10!white, colframe=blue!50!white, title=Classification of Traffic]
+    It’s straightforward to classify traffic for \textbf{channel-based services} (e.g., TCP applications), but more challenging for \textbf{message-based stateless services} (e.g., ICMP, UDP applications), due to their lack of a consistent connection state.
+\end{tcolorbox}
+
+\section{Three Commandments of Firewall}
+\begin{center}
+    1. The firewall (FW) must be the only contact point between the internal network and the external network.
+\end{center}
+
+\begin{center}
+    2. Only “authorized” traffic should be allowed to pass through the firewall.
+\end{center}
+
+\begin{center}
+    3. The firewall must be a highly secure system.
+\end{center}
+
+\emph{-- D. Cheswick and S. Bellovin}
+
+\noindent Referring to each rule:
+\begin{enumerate}
+    \item The behavior of employees poses a risk.
+    \item The technician must understand what they are configuring, especially which rules are necessary.
+    \item Dedicated security elements should be used to avoid cross-vulnerabilities.
+\end{enumerate}
+
+\section{Authorization Policies}
+We have two possible choices:
+\begin{itemize}
+    \item \textbf{Permitlist} (AKA allowlist): "All that is not explicitly permitted, is forbidden."
+    \begin{itemize}
+        \item Higher security (gatekeeper).
+        \item More complex to manage.
+    \end{itemize}
+    \item \textbf{Blocklist} (AKA denylist): "All that is not explicitly forbidden, is permitted."
+    \begin{itemize}
+        \item Lower security (open gates).
+        \item Easier to manage.
+    \end{itemize}
+\end{itemize}
+
+\section*{FW: Basic Components}
+\begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=Beware]
+The Firewall is a system ! With several components.
+\end{tcolorbox}
+
+\begin{itemize}
+    \item \textbf{Packet filter / screening router / choke}: A component that filters traffic at the network level.
+    \item \textbf{Bastion host}: A secure system with auditing.
+    \item \textbf{Application gateway (proxy)}: A service that works on behalf of an application, with access control.
+    \item \textbf{Dual-homed gateway}: A system with two network cards and routing disabled (ip-forwarding off).
+\end{itemize}
+
+\section*{Control Mechanisms for each Level}
+
+

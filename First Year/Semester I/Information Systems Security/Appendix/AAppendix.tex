@@ -6,13 +6,31 @@ In this appendix, we will analyze several types of attacks: IP Spoofing, Packet 
 \begin{center}
     \section{IP Spoofing} 
 \end{center}
-A technique where an attacker alters the source IP address in a packet header to disguise their identity or impersonate another system.
+A technique where \textbf{an attacker alters the source IP address} in a packet header to disguise their identity or impersonate another system.
 
-\subsection{Common uses of IP spoofing}
-In \textbf{Distributed Denial of Service} (DDoS) attacks, IP spoofing is employed to generate a massive amount of traffic directed at a target, using multiple spoofed IP addresses to overwhelm the target’s resources and cause a service disruption. Another use of IP spoofing is in \textbf{Man-in-the-Middle} (MITM) attacks, where attackers impersonate trusted IP addresses to intercept or alter communications between two systems, potentially reading sensitive data or injecting malicious content. Additionally, in \textbf{Session Hijacking}, attackers spoof an IP address to impersonate a legitimate device, allowing them to gain unauthorized access to an active session. Finally, in \textbf{Reflection and Amplification} attacks, attackers send spoofed requests to various servers, which then respond to the victim’s IP address, effectively flooding the victim with high volumes of traffic and causing a denial of service. 
+\subsection*{Common uses of IP spoofing}
+\begin{itemize}
+    \item In \textbf{Distributed Denial of Service} (DDoS) attacks, IP spoofing is employed to generate a massive amount of traffic directed at a target, using multiple spoofed IP addresses to overwhelm the target’s resources and cause a service disruption.
 
-\subsection{Mitigations for IP spoofing}
-To combat IP spoofing, several strategies can be employed. \textbf{Packet filtering} is a key technique, where firewalls and routers apply rules to detect and block packets with forged IP addresses, especially through filtering at entry (ingress filtering) and exit (egress filtering) points. \textbf{Authentication mechanisms} that verify the identity of communicating devices can also enhance security, helping to prevent acceptance of spoofed packets. \textbf{Network monitoring} is crucial as well; by analyzing traffic for unusual patterns or unexpected sources, administrators can detect potential spoofing attempts early. Finally, \textbf{rate limiting} can mitigate the effects of spoofed attacks by controlling the rate of requests from individual sources, reducing the risk of overwhelming the target system.
+    \item Another use of IP spoofing is in \textbf{Man-in-the-Middle} (MITM) attacks, where attackers impersonate trusted IP addresses to intercept or alter communications between two systems, potentially reading sensitive data or injecting malicious content.
+
+    \item In \textbf{Session Hijacking}, attackers spoof an IP address to impersonate a legitimate device, allowing them to gain unauthorized access to an active session.
+
+    \item In \textbf{Reflection and Amplification} attacks, attackers send spoofed requests to various servers, which then respond to the victim’s IP address, effectively flooding the victim with high volumes of traffic and causing a denial of service.
+\end{itemize}
+
+\subsection*{Protection from IP Spoofing}
+\begin{itemize}
+    \item To protect ourselves from \textbf{external impostors}.
+    \item To protect the external world from our \textbf{internal impostors} (\textit{net-etiquette}).
+\end{itemize}
+
+\textbf{Relevant RFCs:}
+\begin{itemize}
+    \item \textbf{RFC-2827}: "Network ingress filtering: defeating Denial of Service attacks which employ IP source address spoofing."
+    \item \textbf{RFC-3704}: "Ingress filtering for multihomed networks."
+    \item \textbf{RFC-3013}: "Recommended Internet Service Provider security services and procedures."
+\end{itemize}
 
 \begin{center}
     \section{Packet Sniffing} 
@@ -155,12 +173,180 @@ Best Practices for protecting Against DHCP Attacks:
 \end{multicols}
 
 Here’s how it works:
+\begin{enumerate}
+\item \textbf{IP Address Spoofing}: The attacker sends ICMP Echo Request (ping) packets with a spoofed source IP address, set to the target’s IP address.
+\item \textbf{Broadcasting}: These ICMP packets are sent to a broadcast address within a network, reaching all devices on that network.
+\item \textbf{Amplification}: Each device in the network responds to the ICMP request, sending replies to the spoofed IP address, i.e., the victim.
+\item \textbf{Overload}: The victim is overwhelmed by numerous ICMP replies, causing instability or making the system unavailable.
+\end{enumerate}
+
+\textbf{Countermeasures:}
+\begin{itemize}
+\item \textbf{For external attacks}: Reject IP broadcast packets at your network border.
+\item \textbf{For internal attacks}: Use network management tools to identify and isolate the attacker.
+\end{itemize}
+
+\begin{center}
+    \section{Fraggle Attack}
+\end{center}
+
+\begin{multicols}{2}
+    Type of Distributed Denial of Service (DDoS) attack similar to a smurf attack, but it exploits the User Datagram Protocol (UDP) instead of ICMP. It relies on amplifying traffic by using spoofed UDP packets sent to a network’s broadcast address, overwhelming the victim with responses.
+
+\columnbreak
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.5\linewidth]{Images/NetSec/fraggle_attack.png}
+        \caption{Fraggle attack example.}
+    \end{figure}
+\end{multicols}
+
+Here’s how it works:
+\begin{enumerate}
+\item \textbf{IP Address Spoofing}: The attacker sends UDP packets with a spoofed source IP address, set to the victim’s IP address.
+\item \textbf{Broadcasting}: These UDP packets are sent to a broadcast address on a network, targeting specific UDP services.
+\item \textbf{Amplification}: All devices in the broadcast network respond to the UDP packets, sending their replies to the victim’s spoofed IP address.
+\item \textbf{Overload}: The victim is overwhelmed by the flood of responses, leading to resource exhaustion and potential system unavailability.
+\end{enumerate}
+
+\textbf{Countermeasures:}
+\begin{itemize}
+\item \textbf{Disable IP broadcasting}: Prevent devices in your network from responding to broadcast requests.
+\item \textbf{Filter UDP traffic}: Use firewalls to block unnecessary UDP traffic, particularly on ports vulnerable to fraggle attacks (e.g., ports 7 and 19).
+\item \textbf{Ingress and egress filtering}: Ensure your network drops packets with spoofed IP addresses to limit the attack’s reach.
+\item \textbf{Monitor traffic anomalies}: Use intrusion detection systems (IDS) or other monitoring tools to detect and mitigate unusual UDP traffic patterns.
+\end{itemize}
+
+\begin{center}
+    \section{ARP Poisoning}
+    (Address Resolution Protocol (RFC-826) Poisoning)
+\end{center}
+
+ARP is used to discover the Layer 2 (L2) address (MAC address) of a node when its Layer 3 (L3) address (IP address) is known. The result of this resolution is stored in the ARP table of network devices.
+
+Here's how it works:
+\begin{enumerate}
+    \item \textbf{Unsolicited ARP Replies}: Nodes accept ARP replies even if no ARP request was made.
+    \item \textbf{Overwriting Static ARP Entries}: Nodes may overwrite static ARP entries with dynamic entries obtained from an ARP reply.
+    \item \textbf{Inconsistent ARP Fields}: The "ar\$sha" ARP field (sender hardware address) in the ARP reply may differ from the source address in the Ethernet frame (802.3 packet).
+    \item \textbf{Exploitation by Attack Tools}: Attack tools like Ettercap can be used to carry out ARP poisoning attacks, allowing an attacker to intercept or manipulate network traffic.
+\end{enumerate}
+
+Countermeasures:
+\begin{enumerate}
+    \item \textbf{Static ARP Entries}: Configure static ARP entries on critical network devices to prevent modification by malicious ARP replies.
+    \item \textbf{ARP Inspection}: Use Dynamic ARP Inspection (DAI) on managed switches to validate ARP packets.
+    \item \textbf{ARP Spoofing Detection Tools}: Use network monitoring tools to detect abnormal ARP behavior and suspicious activity.
+\end{enumerate}
 
 
+\begin{center}
+    \section{TCP SYN Flooding}
+    (Transmission Control Protocol SYN Flooding)
+\end{center}
 
 
+\begin{multicols}{2}
+    Type of Denial of Service (DoS) attack that targets the TCP handshake mechanism. It exploits the way TCP connections are established, overwhelming a server or network device by sending numerous SYN requests without completing the handshake.
+
+\columnbreak
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{Images/NetSec/syn_flooding.png}
+        \caption{TCP SYN flooding attack example.}
+    \end{figure}
+\end{multicols}
+
+Here's how it works:
+\begin{enumerate}
+    \item \textbf{SYN Request}: The attacker sends many TCP packets with the SYN flag set, initiating the three-way handshake but never completing it (i.e., no ACK is sent).
+    \item \textbf{Half-Open Connections}: The target system allocates resources (e.g., memory) for each incoming connection in the TCB (Transmission Control Block), waiting for the final ACK to complete the handshake. These connections remain “half-open” and consume system resources.
+    \item \textbf{Resource Exhaustion}: The victim’s server or network device becomes overwhelmed by the large number of half-open connections, causing resource exhaustion and potentially making the system unavailable to legitimate users.
+\end{enumerate}
+
+Countermeasures:
+\begin{enumerate}
+    \item \textbf{SYN Cookies}: Eliminate the need for the server to allocate memory resources for half-open connections. When the server receives a SYN packet, it generates a SYN cookie, which is a specially crafted sequence number embedded in the SYN-ACK packet.
+    \begin{itemize}
+        \item The only approach that is truly effective in completely avoiding the SYN flooding attack.
+        \item No resource allocation when receiving a SYN.
+        \item The sequence number is computed as a keyed digest.
+        \[
+            \text{cookie} = \text{HMAC-SHA-256}(K, \text{src} || \text{port})
+        \]
+        \item The server sends the cookie to the client and waits for the value \(\text{cookie}+1\).
+    \end{itemize}
+    \item \textbf{Router as "SYN Interceptor"}: Handles the initial stages of the TCP handshake on behalf of the server, reducing the load and risk to the server during a SYN flood attack. Typically, it uses a very short timeout to quickly determine whether the client completes the handshake or not (aggressive timeout).
+    \item \textbf{Timeout Reduction}: Reduce the timeout period for half-open connections, limiting how long the server waits for an ACK.
+    \item \textbf{Router as "SYN Monitor"}: When the router detects a pending or half-open TCP connection request that has not been completed (i.e., the server hasn’t sent the final ACK), it sends an RST (Reset) packet to terminate the connection.
+\end{enumerate}
+
+\begin{multicols}{2}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{Images/NetSec/syn_monitor.png}
+        \caption{SYN monitor.}
+    \end{figure}
+
+\columnbreak
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{Images/NetSec/syn_interceptor.png}
+        \caption{SYN interceptor.}
+    \end{figure}
+\end{multicols}
+
+\begin{center}
+    \section{DNS}
+    (Domain Name System - Security at Level 3)
+\end{center}
+
+Here are some types of attacks listed:
+\begin{itemize}
+    \item DNS \textbf{Cache Poisoning v1} - \textcolor{Blue}{Request-based}, fig:\ref{fig:dns_pv1}: 
+    The user attempts to resolve a query by addressing a malicious nameserver. An attacker, then, injects false DNS records (even for non-requested domains) into the cache of a DNS resolver (overwriting existing ones), redirecting traffic to malicious sites or disrupting services. This attack exploits vulnerabilities in how DNS servers handle responses without proper validation.
+    \item DNS \textbf{Cache Poisoning v2}, fig:\ref{fig:dns_pv2}: 
+    A more advanced form of cache poisoning exploits weaknesses in DNS security. The attacker sends a query to a DNS resolver and simultaneously provides a forged (incorrect) answer. This fake response includes malicious DNS records, designed to be accepted and cached by the victim’s resolver. As a result, the attacker can redirect traffic or disrupt services.
+    \begin{itemize}
+        \item The fake nameserver must respond faster than the authoritative nameservers for the queried domain, which typically include at least three servers (with one being off-site).
+    \end{itemize}
+    \item DNS \textbf{Flash Crowd}: sudden and massive surge of DNS queries to specific domain names, often caused by an unexpected event, like viral content, breaking news, or a popular service announcement. This can result in a strain on DNS servers, potentially leading to delays or service degradation.
+\end{itemize}
+
+\begin{multicols}{2}
+    \begin{figure}[H]
+        \includegraphics[width=\linewidth]{Images/NetSec/dns_cache_pv1.png}
+        \caption{DNS cache poisoning v1.}
+        \label{fig:dns_pv1}
+      \end{figure}
+
+\columnbreak
+
+  
+  \begin{figure}[H]
+      \includegraphics[width=\linewidth]{Images/NetSec/dns_cache_pv2.png}
+      \caption{DNS cache poisoning v2.}
+      \label{fig:dns_pv2}
+    \end{figure}
+    
+\end{multicols}
 
 
+\begin{center}
+    \section{Hiccup}
+    (The term isn’t officially standardized)
+\end{center}
+A \textbf{Denial of Service (DoS) attack} that exploits periodic unavailability or instability in a system’s performance. This type of attack involves causing brief disruptions or intermittent delays in service rather than sustaining a continuous outage.
+
+Key features:
+\begin{itemize}
+    \item \textbf{Intermittent Disruption:} Instead of overwhelming the target continuously, the attacker sends \underline{bursts} of malicious traffic or \underline{sporadically} exploits vulnerabilities, making the attack more difficult to detect.
+    \item \textbf{Impact:} The attack degrades user experience (e.g., introducing lag or delays in applications), rendering the service unreliable without fully taking it offline.
+    \item \textbf{Targets:} Common targets include DNS servers, application servers, or APIs with specific vulnerabilities or low tolerance to periodic spikes.
+\end{itemize}
 
 % --------
 
@@ -197,24 +383,4 @@ Here’s how it works:
     \\ \hline
 
     Backdoor
-        & Unauthorized access point, it allows an attacker to remotely control the system or retrieve sensitive information without the knowledge of the legitimate users or administrators.
-    \\ \hline
-
-    Rootkit
-        & Designed to gain unauthorized access to a system and maintain privileged control (root access) while hiding its presence from users and security software.
-    \\ \hline
-
-    Potentially Unwanted Applications (PUAs)
-        & Software programs that are not inherently malicious but may negatively impact a user’s system or experience. They often include programs like adware, toolbars, or system optimizers that may be bundled with other software. While PUAs typically don’t cause direct harm like viruses or malware, they can degrade system performance, display excessive ads, or compromise privacy by collecting personal data without clear consent. 
-    \\ \hline
-
-    Ransomware 
-        & Encrypts a user’s files or locks them out of their system, rendering the data inaccessible. The attacker then demands a ransom.
-    \\ \hline
-
-
-
-\end{tabular}
-\caption{Attack Vectors}
-\label{tab:attackVectors}
-\end{table}
+        & Unauthorized access point, it allow
