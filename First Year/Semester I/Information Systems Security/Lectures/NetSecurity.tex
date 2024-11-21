@@ -925,10 +925,13 @@ In Tunnel Mode, the entire original IP packet, including \textbf{both the header
     \end{itemize}
 \end{tcolorbox}
 
-\subsubsection{Format}
 \begin{center}
+\textbf{AH format:}
+
     (RFC-4302)
 \end{center}
+
+\hfill
 
 \begin{figure}[H]
     \includegraphics[width=\linewidth]{Images/NetSec/AH_format.png}
@@ -1060,7 +1063,15 @@ Key features:
         \item Minimum window size of \textbf{32 packets} (64 packets recommended)
         \item Creation is mandatory for the sender, but verification is optional for the receiver (this is announced during \textbf{SA negotiation}). \textcolor{red}{the receiver can be replayed if possible!}
     \end{itemize}
+    \item \textbf{VPN concentrator}: A special-purpose appliance that acts as the terminator of an IPsec tunnel:
+    \begin{itemize}
+        \item Used for remote access by individual clients.
+        \item Facilitates the creation of site-to-site VPNs.
+        \item Offers very high performance relative to its low cost.
+    \end{itemize}
 \end{itemize}
+
+
 
 \subsubsection{IPsec Replay Protection}
 \begin{center}
@@ -1238,9 +1249,193 @@ Use case:
 \end{figure}
 
 \subsection{Secure Gateway}
-The diagram in Figure \ref{fig:secgat} illustrates secure communication between devices and a gateway over a WAN, highlighting the use of encryption and tunnel mode to ensure data confidentiality and integrity during transmission, with optional authentication for accessing the internal network.
+\begin{center}
+    (gateway-based security)
+\end{center}
+The diagram in Figure \ref{fig:secgat} describes a gateway-based security, where the communication is secure up to the gateway, but not necessarily beyond it within the internal network.
+
+Main points:
+\begin{itemize}
+    \item The devices securely communicate with the gateway over a WAN, typically using encryption and tunneling protocols (e.g., IPsec).
+    \item The gateway decrypts the data to route it within the internal network. This means the data is only protected between the device and the gateway, not necessarily within the internal network unless additional measures (e.g., network encryption or internal security protocols) are applied.
+\end{itemize}
+
 \begin{figure}[H]
   \includegraphics[width=\linewidth]{Images/NetSec/secure_gateway.png}
   \caption{Secure gateway implementation.}
   \label{fig:secgat}
 \end{figure}
+
+\subsection{Secure Remote Access}
+\begin{center}
+    (gateway-based security with end-to-end security)
+\end{center}
+
+The figure \ref{fig:gat_end} depicts an end-to-end encryption layered on top of gateway-based security. 
+
+Key features:
+\begin{itemize}
+    \item Data is not exposed to the gateway or any intermediary in the internal network, reducing the risk of breaches or unauthorized access at these points.
+    \item Double encryption (transport and end-to-end) can introduce latency and resource overhead.
+    \item \textcolor{red}{Problem: }\textbf{Key Management}: To implement end-to-end security, keys or certificates must be exchanged between the communicating endpoints, bypassing the gateway’s control.
+\end{itemize}
+
+
+\begin{figure}[H]
+  \includegraphics[width=\linewidth]{Images/NetSec/gatsec_end.png}
+  \caption{Gateway-based security with end-to-end security.}
+  \label{fig:gat_end}
+\end{figure}
+
+\subsection{Anonymous Navigation}
+The figure \ref{fig:anonnav} illustrates a scenario of anonymous navigation using a VPN (Virtual Private Network) setup.
+\begin{center}
+    (usually called "VPN")
+\end{center}
+
+
+\begin{itemize}
+    \item The VPN server:
+    \begin{itemize}
+        \item Is a trusted intermediary that establishes a secure communication channel with the client. 
+        \item Decrypts/Encrypts the traffic from/to the client and forwards it to the destination server (or internal network) \textcolor{red}{without added protection}. 
+    \end{itemize}
+    \item VPN Client:
+    \begin{itemize}
+        \item A device (e.g., a computer) running a VPN client software to establish a secure connection.
+        \item The user initiates a secure virtual channel to the VPN server over the internet.
+    \end{itemize}
+    \item Secure Virtual Channel (tunnel-mode):
+    \begin{itemize}
+        \item This refers to the tunnel mode Security Association (SA) used by the VPN.
+        \item In tunnel mode, the original IP packet (both data and headers) is encrypted and encapsulated, ensuring protection of both the payload and the source/destination information while in transit.
+    \end{itemize}
+\end{itemize}
+
+\begin{figure}[H]
+  \includegraphics[width=\linewidth]{Images/NetSec/anonnav.png}
+  \caption{Anonymous navigation.}
+  \label{fig:anonnav}
+\end{figure}
+
+\section{IPsec Key Management}
+The key management is a very important component of IPsec. Provides to the IPsec parties the symmetric keys used for packet authentication and/or encryption.
+
+Key distribution:
+\begin{itemize}
+    \item OOB (Out-Of-Band, e.g. manual, installing pre-shared key).
+    \item Automatic in-band (e.g. IKE).
+\end{itemize}
+
+\subsection{ISAKMP}
+\begin{center}
+    (Internet Security Association and Key Management Protocol - RFC-2408)
+\end{center}
+
+Key features:
+\begin{itemize}
+    \item Provides a framework for establishing, managing, and deleting Security Associations (SAs).
+    \item Does not dictate a specific key exchange method but allows for flexibility by integrating different protocols (e.g., OAKLEY).
+    \[\bf{OAKLEY:}\]
+    \begin{itemize}
+        \item A protocol for authenticated key (symmetric) exchanges between parties.
+        \item \underline{Only} used for automatic in-band key distribution.
+    \end{itemize}
+    \item Reuse of ISAKMP SA: The same ISAKMP SA can be reused for negotiating\footnote{SA Negotiation: Handles the negotiation of SA parameters required for IPsec traffic, such as encryption algorithms and key lifetimes.} multiple IPsec SAs, optimizing performance.
+\end{itemize}
+
+\subsection{IKE}
+\begin{center}
+    (Internet Key Exchange - RFC-2409 IKEv1 - RFC-7296 IKEv2)
+\end{center}
+\[
+ISAKMP + OAKLEY
+\]
+
+Used for the secure negotiation of IPsec SAs, including the exchange of keys and authentication. Combines the functionalities of ISAKMP and OAKLEY into a single protocol.
+
+Purpose:
+\begin{itemize}
+\item \textbf{Creation of ISAKMP SA}: The first step is to establish a secure channel (called the ISAKMP SA) to protect subsequent negotiations. This channel is itself negotiated and secured by IKE.
+\item \textbf{Negotiation of IPsec SAs}: After the ISAKMP SA is established, it is used to negotiate the IPsec SAs, which define the parameters for securing IPsec-protected traffic.
+\end{itemize}
+
+\subsubsection{Operations}
+Purpose of Phase 1:
+
+\begin{center}
+    Negotiates a bidirectional ISAKMP (Internet Security Association and Key Management Protocol) Security Association (SA), which establishes a secure, encrypted channel for further communication.
+\end{center}
+Purpose of Phase 2:
+\begin{center}
+    Negotiates the IPsec Security Association (SA), which defines how the traffic will be encrypted, authenticated, and tunneled.
+\end{center}
+
+\begin{figure}[H]
+  \includegraphics[width=\linewidth]{Images/NetSec/ike_operations.png}
+  \caption{IKE operations.}
+\end{figure}
+
+\subsubsection{Modes of Operation}
+\begin{itemize}
+    \item \textbf{Main mode}:
+    \begin{itemize}
+        \item 6 messages exchanged (both sides authenticate each other and agree on key exchange parameters).
+        \item \textcolor{red}{Identity Protection}: The parties exchange their identities in a secure form to prevent them from being visible on the network. This protects not only the IP addresses but also any application layer parameters (such as hostnames or other identifiers).
+        \item Secure exchange of cryptographic material (e.g., Diffie-Hellman keys) between the initiator and responder.
+    \end{itemize}
+    \item \textbf{Aggressive mode}: 3 messages, faster than Main Mode but does not protect the parties' identities (such as IP addresses or hostnames). 
+    \item \textbf{Quick mode}: 3 messages exchanged, and used for the negotiation of the IPsec Security Association (SA) after the completion of Phase 1. It focuses on securing the data channel and defining IPsec parameters (e.g., encryption and authentication methods).
+    \item \textbf{New group mode}: 2 messages, used for renegotiating the Diffie-Hellman group and refreshing key material. The existing SA remains open, but a new key is negotiated after a predefined number of packets (or time).
+\end{itemize}
+
+\subsubsection{Authentication Methods}
+\begin{itemize}
+    \item \textbf{Digital signature}: \textcolor{Blue}{non-repudiation} of the IKE negotiation.
+    \item \textbf{Public key Encryption}: \textcolor{Blue}{identity protection} in the aggressive mode.
+    \item \textbf{Revised Public Key Encryption}: \textcolor{Blue}{identity protection} and less expensive, only 2 public-key operations.
+    \item \textbf{Pre-Shared Key}: The party ID is typically the IP address, which can be problematic for mobile users due to the frequent changes in their IP addresses.
+\end{itemize}
+
+\section{Applicability of IPsec}
+Scenarios, conditions, or environments where the IPsec protocol can be used effectively:
+\begin{itemize}
+    \item Only for unicast packets (no support for broadcast, multicast, or anycast).
+    \item Between parties that have activated a Security Association (SA), which can be established:
+    \begin{itemize}
+        \item Using shared keys.
+        \item Using X.509 certificates.
+    \end{itemize}
+    \item Therefore, IPsec is used in \textbf{"closed" groups} (it cannot be public, but new users can be registered).
+\end{itemize}
+
+\section{IP (in)security}
+\begin{itemize}
+    \item IP addresses are not authenticated.
+    \item Packets are not protected in terms of:
+    \begin{itemize}
+        \item Integrity.
+        \item Authentication.
+        \item Confidentiality.
+        \item Protection against replay attacks.
+    \end{itemize}
+    \item As a result, all protocols that use IP as their carrier are vulnerable to attacks, with a particular impact on "service" protocols (i.e., non-application protocols, such as ICMP, IGMP, DNS, RIP, etc.).
+\end{itemize}
+
+\section{ICMP security}
+\textbf{Internet Control Message Protocol (ICMP)}: A vital protocol for network management and diagnostics.
+\begin{itemize}
+    \item Many attacks are possible because ICMP lacks authentication and security measures.
+    \item Common ICMP functions:
+    \begin{itemize}
+        \item Echo request/reply (used for pinging).
+        \item Destination unreachable (network, host, protocol, or port unreachable).
+        \item Source quench (used to signal congestion).
+        \item Redirect (used for routing updates).
+        \item Time exceeded (indicates that the datagram has expired in transit).
+    \end{itemize}
+\end{itemize}
+
+\begin{tcolorbox}[colback=blue!10!white, colframe=blue!50!white, title=ICMP and IPsec]
+ICMP is used for global purposes, so IPsec cannot be implemented with it (since IPsec is intended for use in "closed" groups).
+\end{tcolorbox}

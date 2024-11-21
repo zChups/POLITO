@@ -137,6 +137,24 @@ Best Practices for protecting Against DHCP Attacks:
     \item Authentication for DHCP Messages (RFC-3118) uses HMAC-MD5 (\textcolor{Blue}{authentication and integrity}) to authenticate DHCP messages. However, there are challenges with key distribution and management since it relies on a shared key.
 \end{itemize}
 
+\begin{center}
+    \section{Smurfing}
+\end{center}
+
+
+\begin{multicols}{2}
+    Type of distributed denial-of-service (DDoS) attack that exploits the Internet Control Message Protocol (ICMP) and the IP broadcast feature to amplify traffic and overwhelm a target system or network. 
+
+\columnbreak
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.5\linewidth]{Images/NetSec/smurfing.png}
+        \caption{Smurfing Attack example.}
+    \end{figure}
+\end{multicols}
+
+Here’s how it works:
 
 
 
