@@ -75,7 +75,7 @@ The Firewall is a system! With several components.
 \end{itemize}
 
 \begin{tcolorbox}[colback=blue!10!white, colframe=blue!50!white, title=What is a Proxy]
-    A proxy is a system or service that sits between the client and the application server. It intercepts and controls the traffic between the two, often for purposes such as filtering, caching, security, or access control.
+    A proxy is a system or service that sits between the client and the application server. It intercepts and controls the traffic between the two, often for purposes such as filtering, caching, security, or access control. A proxy is not inherently a firewall, but it can function in a way similar to a firewall depending on its role and how it’s configured.
 \end{tcolorbox}
 
 \section{Control Mechanisms for each Level}
@@ -141,6 +141,24 @@ To provide a clear and structured explanation of the different controls at vario
     \end{itemize}
 \end{itemize}
 
+\subsection{Circuit-level Gateway}
+\textbf{Generic Proxy (i.e., not "Application-Aware")}
+\begin{itemize}
+    \item Creates a transport-level circuit between the client and server.
+    \item Does not understand or manipulate the payload data in any way.
+    \item Simply copies TCP segments or UDP datagrams between its two interfaces, provided they match the access control rules.
+    \item Re-assembles the IP packets, which helps provide protection against some Layer 3 (L3) and Layer 4 (L4) attacks.
+    \item Breaks the TCP/UDP-level client/server model during the connection.
+    \item Provides more protection for the server.
+    \begin{itemize}
+        \item Isolated from attacks related to the TCP handshake.
+        \item Isolated from attacks related to IP fragmentation.
+    \end{itemize} 
+    \item May authenticate the client, but this requires modification to the application.
+    \item Exhibits many limitations of a packet filter.
+    \item \textbf{SOCKS} is one of the most well-known examples of a generic proxy.
+\end{itemize}
+
 \subsection{Application-level Gateway}
 Composed of a set of proxies (collection of elements) inspecting the packet payload at the application level:
 \begin{itemize}
@@ -191,25 +209,7 @@ Composed of a set of proxies (collection of elements) inspecting the packet payl
     \end{itemize}
 \end{itemize}
 
-\subsection{Circuit-level Gateway}
-\textbf{Generic Proxy (i.e., not "Application-Aware")}
-\begin{itemize}
-    \item Creates a transport-level circuit between the client and server.
-    \item Does not understand or manipulate the payload data in any way.
-    \item Simply copies TCP segments or UDP datagrams between its two interfaces, provided they match the access control rules.
-    \item Re-assembles the IP packets, which helps provide protection against some Layer 3 (L3) and Layer 4 (L4) attacks.
-    \item Breaks the TCP/UDP-level client/server model during the connection.
-    \item Provides more protection for the server.
-    \begin{itemize}
-        \item Isolated from attacks related to the TCP handshake.
-        \item Isolated from attacks related to IP fragmentation.
-    \end{itemize} 
-    \item May authenticate the client, but this requires modification to the application.
-    \item Exhibits many limitations of a packet filter.
-    \item \textbf{SOCKS} is one of the most well-known examples of a generic proxy.
-\end{itemize}
-
-\subsection{HTTP Proxy}
+\subsection*{HTTP Proxy}
 \begin{center}
     \textbf{Forward Proxy}
 \end{center}
@@ -260,6 +260,10 @@ Composed of a set of proxies (collection of elements) inspecting the packet payl
 (Web Application Firewall)
 \end{center}
 
+\begin{tcolorbox}[colback=blue!10!white, colframe=blue!50!white]
+    The implementation of this module enables a proxy to function as an application firewall.
+\end{tcolorbox}
+
 The large use of web applications leads to an increase in threats targeting them.
 \begin{itemize}
     \item A WAF is a module installed at a proxy (either forward and/or reverse) to filter application traffic.
@@ -278,6 +282,7 @@ The large use of web applications leads to an increase in threats targeting them
 
 \section{Firewall Architectures}
 \subsection{Packet Filter}
+Control the flow of traffic between networks or network segments. It operates at the network layer (Layer 3) inspecting each packet’s header and making decisions based on predefined filtering rules. The architecture of a packet filter is designed to act as a firewall that filters traffic based on IP addresses, protocols, ports, and other packet header attributes, without inspecting the payload data.
 
 \begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=Beware]
     Simple, cost-effective, but... insecure!
@@ -297,14 +302,16 @@ The large use of web applications leads to an increase in threats targeting them
 \end{figure}
 
 \subsection{Dual-homed Gateway}
+A Dual-Homed Gateway uses a bastion host with two NICs (Network Interface Cards) to connect to two different networks, typically a trusted internal network and an untrusted external network (such as the internet). This configuration provides a layer of security by isolating and controlling the communication between the two networks.
+
 \begin{itemize}
     \item Easy to implement.
     \item Small additional hardware requirements.
     \item The internal network can be masqueraded.
     \item Inflexible: The packet filter cannot easily adapt to changing network requirements or policies, and it does not provide much flexibility in managing traffic.
     \item High work overhead.
-    \item The packet filter element performs an initial screening of the traffic.
-    \item The gateway could become a bottleneck, reducing the overall performance of the system.
+    \item The border router performs an initial screening of the traffic.
+    \item The bastion host (gateway) could become a bottleneck, reducing the overall performance of the system.
 \end{itemize}
 
 \begin{figure}[H]
@@ -314,10 +321,76 @@ The large use of web applications leads to an increase in threats targeting them
 \end{figure}
 
 \subsection{Screened Host}
+Uses two primary components: a router and a bastion host. This setup aims to provide enhanced security by controlling the flow of traffic between the internal and external networks. Below are the characteristics and key features of this architecture:
 
+\begin{itemize}
+    \item Router:
+    \begin{itemize}
+        \item Acts as a filtering device between the internal (INT) and external (EXT) networks.
+        \item Blocks traffic from internal to external networks (INT > EXT) unless the traffic is coming from the bastion host.
+        \item Blocks traffic from external to internal networks (EXT > INT) unless it is directed towards the bastion host.
+        \item Exceptions: The router allows traffic for directly enabled services, meaning services that are explicitly allowed (e.g., HTTP, DNS) can pass through based on predefined rules.
+    \end{itemize}
+    \item Bastion Host:
+    \begin{itemize}
+        \item Serves as a secure intermediary and runs either a circuit gateway or an application gateway.
+        \item Controls access to the authorized services (e.g., web servers, FTP servers) by inspecting and filtering traffic at a deeper level.
+        \item Ensures that only legitimate services are accessible to the external network, protecting the internal network from unauthorized access.
+    \end{itemize}
+    \item Pros and Cons:
+    \begin{itemize}
+        \item More Expensive and Complex to Manage: The setup is more complex because it involves managing two systems (router + bastion host), which increases both the cost and administrative overhead.
+        \item More Flexible: The architecture offers flexibility because it allows skipping control over some services or hosts. For example, some services may bypass the bastion host if specifically configured to do so, making it easier to manage certain use cases.
+        \item Limited Masking: Only the hosts and protocols that go through the bastion host can be masked for security (such as hiding internal IP addresses or data). However, if the packet filter (PF) uses NAT (Network Address Translation), it can mask additional traffic and hide internal network details.
+    \end{itemize}
+\end{itemize}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.5\linewidth]{Images/Firewalling/screened_host.png}
     \caption{Screened host architecture.}
 \end{figure}
+
+\subsection{Screened Subnet}
+\textcolor{blue}{The most secure solution}, however very complex and expensive. Creates a buffer zone between an internal network and an external network (such as the internet). The screened subnet typically involves two firewalls and a DMZ (Demilitarized Zone) to filter and control the flow of data between the internal network and external network. This setup ensures that external entities can access certain resources without directly exposing the internal network, providing an additional layer of security.
+
+\begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=Beware]
+The bastion host must not be in the internal network.
+
+\hfill 
+
+The two packet filters should not have the same implementation (i.e., they should not be from the same vendor).
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=blue!10!white, colframe=blue!50!white, title=DMZ]
+    The De-Militarized Zone (DMZ) is home not only to the gateway but also to other hosts, typically the public-facing servers.
+\end{tcolorbox}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/Firewalling/screened_subnet.png}
+    \caption{Screened subnet architecture.}
+\end{figure}
+
+\subsection{Screened Subnet V2}
+\begin{center}
+    (AKA Three-Legged Firewall)
+\end{center}
+
+\noindent In this version of the \textbf{Screened Subnet} architecture, the \textbf{packet filter (PF)} and \textbf{gateway (GW)} functions are often combined into a single device.
+
+\hfill 
+
+\noindent\textbf{Three-Legged Design}: This setup involves a firewall device with three network interfaces.
+\begin{itemize}
+    \item One interface connecting to the \textbf{external network} (untrusted),
+    \item One interface connecting to the \textbf{internal network} (trusted),
+    \item One interface connecting to the \textbf{DMZ} (where public-facing services reside).
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/Firewalling/screened_subnet_v2.png}
+    \caption{Three-legged architecture.}
+\end{figure}
+
