@@ -74,6 +74,23 @@
     tabsize=2                           % Set tab size to 2 spaces
 }
 
+\lstdefinestyle{pythonStyle}{
+  backgroundcolor=\color{Blue!10}, % Light blue background
+    basicstyle=\ttfamily\footnotesize, % Monospace font
+    breaklines=true, % Automatically break long lines
+    captionpos=b, % Position the caption at the bottom
+    numbers=left, % Show line numbers
+    numberstyle=\tiny\color{blue!50}, % Line numbers in a lighter blue
+    keywordstyle=\color{blue!80}\bfseries, % Keywords in bold dark blue
+    commentstyle=\color{blue!50}, % Comments in medium blue
+    identifierstyle=\color{blue!70}, % Variable names and function names in blue
+    showstringspaces=false, % Do not show spaces inside strings
+    emph={True, False, None}, % Highlight Python booleans and None
+    emphstyle=\color{blue!90}\bfseries, % Make True/False/None bold and dark blue
+    extendedchars=true, % Support for extended characters (e.g., Unicode)
+    language=Python, % Set language to Python for syntax highlighting
+}
+
 % Togliendo il commento al comando che segue, si inseriscono nella bibliografia anche le fonti presenti in Bibliography.bib ma non citati direttamente con il comando \cite
 %\nocite{*}
 
