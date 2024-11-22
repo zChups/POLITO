@@ -394,3 +394,234 @@ The two packet filters should not have the same implementation (i.e., they shoul
     \caption{Three-legged architecture.}
 \end{figure}
 
+
+
+
+
+%-------
+
+
+
+
+
+\section{Local and Personal Firewall}
+Is a firewall (typically, a packet filter) installed directly on the device or server to be protected.
+
+\[
+Local \rightarrowtail Server \\
+\]
+
+\[
+Personal \rightarrowtail User\ Device
+\]
+Key points:
+\begin{itemize}
+    \item Differs from network firewalls, which are typically installed at the network perimeter. In fact, my limit the processes that are permitted:
+    \begin{itemize}
+        \item It can limit processes opening network channels (acting as a client).
+        \item It can limit processes answering network requests (acting as a server).
+    \end{itemize}
+    \item It is usually implemented as a packet filter, controlling the data packets sent to and from the protected device.
+    \item Security Goals:
+    \begin{itemize}
+        \item Helps limit malware and Trojan diffusion within the device or network.
+        \item Reduces the risk of configuration mistakes that might expose vulnerabilities.
+    \end{itemize}
+\end{itemize}
+
+\begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=Beware]
+    For the firewall to remain effective, its management must be separate from system management. This separation prevents unauthorized users or processes from tampering with firewall settings.
+\end{tcolorbox}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{Images/Firewalling/local_personal_firewall.png}
+    \caption{Network, Local and Personal firewall.}
+\end{figure}
+
+\section{Firewall Security Features}
+This section explains the protection scope and limitations of a firewall:
+\begin{itemize}
+    \item Effectiveness of a Firewall:
+    \begin{itemize}
+        \item A firewall is fully effective only against attacks targeting blocked channels (e.g., ports or IP ranges that it is configured to deny).
+        \item \textcolor{Red}{Be aware! }It cannot protect against threats coming through allowed channels, as those are intentionally left open for communication.
+    \end{itemize}
+    \item For the channels left open, other security measures are required to handle potential threats:
+    \begin{itemize}
+        \item VPN (Virtual Private Network)
+        \item Semantic Firewalls or IDS (Intrusion Detection Systems): Analyzes the meaning or behavior of traffic to detect and block malicious activity.
+        \item Application-Level Security: Protects specific applications by adding layers of security (e.g., input validation, authentication mechanisms).
+    \end{itemize}
+\end{itemize}
+
+\subsection{IDS}
+\begin{center}
+    (Intrusion Detection System)
+\end{center}
+
+An IDS is a security system designed to detect:
+\begin{itemize}
+    \item Unauthorized users attempting to access a system or network.
+    \item The actions of unauthorized users within the system.
+\end{itemize}
+
+It can also be extended to identify authorized users who violate their privileges, such as accessing data or performing actions beyond their granted permissions.
+
+\hfill
+
+\begin{multicols}{2}
+    Core assumption:
+
+    \columnbreak
+
+    \raggedleft
+    \textbf{Unauthorized users exhibit different behavioral patterns compared to authorized ones.}
+\end{multicols}
+
+\textbf{Functional features:}
+\begin{itemize}
+    \item Passive IDS:
+    \begin{itemize}
+        \item Focuses on detection without direct interaction or intervention.
+        \item Effect Detection: Identifies the impact of an attack, such as file changes detected through tools like cryptographic checksums or Tripwire.
+        \item Pattern Matching: Compares traffic or payloads against known attack or malware signatures to identify threats.
+    \end{itemize}
+    \item Active IDS:
+    \begin{itemize}
+        \item Takes a more dynamic and proactive approach to intrusion detection through the following processes.
+        \begin{itemize}
+            \item Learning: Uses statistical analysis to understand and establish baseline system behavior over time.
+            \item Monitoring: Actively collects statistical information about traffic, data flows, sequences, and user actions.
+            \item Reaction: Compares real-time activity against the established statistical parameters. Initiates a reaction or alert when certain thresholds (e.g., anomalous traffic or behavior) are exceeded.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+
+\begin{tcolorbox}[colback=blue!10!white, colframe=blue!50!white]
+    Usually, we have a hybrid strategy, combining both passive and active approaches, and we need a bit of tolerance for false positives to ensure potential threats are not overlooked.
+\end{tcolorbox}
+
+\textbf{Topological features:}
+\begin{itemize}
+    \item HIDS (Host-Based IDS): 
+    \begin{itemize}
+        \item Operates on individual hosts (e.g., servers, workstations).
+        \item Log Analysis: Examines logs generated by the operating system (OS), services, or applications to detect suspicious activities or patterns.
+        \item Internal OS Monitoring Tools: Uses tools within the OS to track file integrity, process activity, and other host-level indicators of compromise.
+    \end{itemize}
+    \item NIDS (Network-Based IDS)
+\end{itemize}
+
+\subsubsection{NIDS}
+\begin{center}
+    (Network-Based IDS)
+\end{center}
+Monitors and analyzes network traffic across a network segment or the entire network. Uses Network Traffic Monitoring Tools, which capture and examine packets flowing through the network to detect unusual patterns, malicious payloads, or unauthorized access attempts.
+
+\textbf{Components:}
+\begin{itemize}
+    \item Sensor: The sensor is responsible for monitoring network traffic and logs to detect potential security threats.
+    \begin{itemize}
+        \item Traffic and Log Analysis: It scans the network traffic and logs for suspect patterns that might indicate an attack or malicious activity.
+        \item Security Event Generation: When suspicious patterns are detected, the sensor generates security events to report them.
+        \item Interaction with the System: The sensor can take actions based on detected threats, such as modifying Access Control Lists (ACLs) or triggering a TCP reset to disrupt a malicious connection.
+    \end{itemize}
+    \item Director: The director is the central component that coordinates and manages the NIDS system.
+    \begin{itemize}
+        \item Sensor Coordination: It manages the interaction and operation of multiple sensors distributed across the network.
+        \item Security Database Management: The director manages a database that stores security events, logs, and configurations for future analysis and reporting.
+    \end{itemize}
+    \item  IDS Message System: This component ensures secure and reliable communication between the various NIDS components (sensors, director, etc.).
+    \begin{itemize}
+        \item It ensures that data and alerts are transmitted between components securely, preventing tampering or loss of critical information.
+    \end{itemize}
+\end{itemize}
+
+\noindent\textbf{Architecture:}
+
+The workflow of a Network-Based Intrusion Detection System (NIDS) architecture involves several steps (fig.\ref{fig:nids_architecture}):
+\begin{itemize}
+    \item Sensors:
+    \begin{itemize}
+        \item Capture network traffic (packets) and log information from various points within the network.
+        \item Compare the network traffic and logs to a set of predefined attack signatures or anomaly patterns.
+    \end{itemize}
+    \item Anomaly Detection: If the traffic deviates from normal behavior, the sensor may identify it as an anomaly (e.g., a DDoS attack, port scanning, or other unauthorized access attempts).
+    \item If suspicious activity is detected, the sensor generates security events and sends them to the IDS director.
+    \item The director analyzes and correlates incoming events from multiple sensors, looking for patterns or sequences of activities that indicate a more significant attack (e.g., a coordinated attack across multiple sensors).
+    \item Immediate Actions: Based on predefined rules, the director can initiate automatic responses.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{Images/Firewalling/nids_architecture.png}
+    \caption{Network-based IDS architecture.}
+    \label{fig:nids_architecture}
+\end{figure}
+
+\section{Other Firewall Implementations}
+
+\subsection{IPS}
+\begin{center}
+    (Intrusion Prevention System)
+\end{center}
+
+An IPS combines Intrusion Detection with the capability to actively prevent detected threats. The goal is to speed up and automate the response to intrusions by integrating an IDS (Intrusion Detection System) with a distributed dynamic firewall, which can take immediate actions to block malicious traffic.
+
+\begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=Beware]
+Dangerous! IPS systems can erroneously block or allow traffic, potentially causing harm to the network or users if the wrong decision is made.
+\end{tcolorbox}
+
+\begin{itemize}
+    \item An IPS is not just a standalone product; it’s a technology that can be integrated into the overall security infrastructure to provide real-time detection and mitigation of attacks.
+    \item Many modern security systems integrate IDS and IPS into a single product known as IDPS (Intrusion Detection and Prevention System).
+\end{itemize}
+
+\subsection{NGFW}
+\begin{center}
+    (Next-Generation Firewall)
+\end{center}
+
+Extends traditional firewall functionality by integrating advanced features that provide deeper inspection and more granular control over network traffic. 
+
+Key features:
+\begin{itemize}
+    \item Application Identification: 
+    \begin{itemize}
+        \item Can identify and control applications regardless of the port or protocol used (w.r.t. classic firewalls an NGFW analyzes also traffic patterns on the application layer).
+        \item Deciphering/Re-ciphering Traffic: NGFWs can perform SSL/TLS decryption to inspect encrypted traffic, allowing them to detect hidden threats in secure communications.
+    \end{itemize}
+    \item User Identification:
+    \begin{itemize}
+        \item NGFWs can integrate with user authentication mechanisms, enabling them to enforce policies based on the user rather than just IP addresses.
+        \item Integration with: Captive Portals (e.g., Wi-Fi), 802.1x and end-point authentication (e.g., Kerberos, Active Directory, and LDAP)
+    \end{itemize}
+    \item Per-User and Per-Application Policies:allow the creation of security policies that are user-specific and application-specific (For example, an NGFW could block social media applications for some users while allowing them for others).
+    \item Filtering based also upon known vulnerabilities, threats, malware
+\end{itemize}
+
+\subsection{UTM}
+\begin{center}
+    (Unified Threat Management)
+\end{center}
+Integrates multiple security functionalities into a single device. This approach simplifies network security by combining various protections into one solution, making it easier to manage and often more cost-effective.
+
+\hfill 
+
+Key features:
+\begin{itemize}
+    \item Common capabilities: firewall, VPN, anti-malware, content-inspection, IDPS (Intrusion Detection and Prevention System).
+    \item Actual capabilities depend upon the manufacturer.
+    \item Mainly targeted to reduce the number of different systems,
+    hence the management complexity and the cost
+\end{itemize}
+
+\subsection{Honey Pot / Honey Net}
+Security tools designed to deceive attackers by creating artificial environments that simulate vulnerable systems or networks. Their main purpose is to attract and observe malicious activity, helping security professionals gather information on attack methods, identify vulnerabilities, and develop better defense strategies.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{Images/Firewalling/honey_pot.png}
+    \caption{Honey pot architecture.}
+\end{figure}
