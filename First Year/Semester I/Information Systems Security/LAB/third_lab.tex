@@ -120,4 +120,231 @@ The goal of this laboratory is to experiment with the application of the main cr
 
         xxd 
             \newline 
-            \newline Non-printable 
+            \newline Non-printable characters are replaced with a dot "."
+            & Creates  a  hex  dump of a given file or standard input.  It can also convert a hex dump back to its original binary form.
+            & -b (bits dump)
+        \\ \hline 
+
+        sqlite3 
+            & Terminal-based front-end to the SQLite library.
+            & -header; -column
+        \\ \hline
+
+
+    \end{tabular}
+
+    \caption{Utility commands}
+
+\end{table}
+
+\section{Digital Certificates}
+\subsection{X.509v3 Certificate}
+
+\begin{lstlisting}[style=bashStyle]
+    #view the content of an X.509 certificate
+    openssl x509 -in <cert_file> -text -noout
+
+    #the Certificate Revocation List (CRL) can be downloaded from the URL provided in the certificate (check the CRL Distribution Points (CDP) field in the certificate details)
+    #view CRL content:
+    openssl crl -inform DER|PEM -in <crl_file> -text
+
+    #same for the OCSP responder (under Authority Information Access field)
+
+    #check the status of the certificate
+    openssl ocsp -issuer <file>.pem -cert <file>.pem -url <URL> -resp_text
+\end{lstlisting}
+
+\section{Key Exchange with DH Algorithm}
+
+\begin{center}
+    (Diffie-Hellman Algorithm)
+\end{center}
+
+The Diffie-Hellman (DH) algorithm is one of the foundational methods for secure key exchange. It enables two parties to establish a shared secret over an insecure communication channel without transmitting the secret itself.
+
+\begin{quotation}
+    Now, let’s assume that Alice and Bob want to use the Diffie-Hellman algorithm to agree on a common secret
+key. You will use OpenSSL commands for this purpose.
+\end{quotation}
+
+\begin{lstlisting}[style=bashStyle]
+    #generate public parameters (used by both peers) for DH
+    openssl dhparam -out dhparams.pem -2 1024
+    #in order to see them
+    openssl dhparam -in dhparams.pem -text
+
+    #Alice and Bob use the parameters to generate their own DH pair (public and private).
+    openssl genpkey -paramfile dhparams.pem -out <user>dhkey.pem
+    #in order to read them
+    openssl pkey -in <user>dhkey.pem -text
+
+    #Alice and Bob have to exchange their own public keys
+    #thus, each of them will have to extract DH pub keys and store them
+    openssl pkey -in <user>dhkey.pem -pubout -out <user>dhPUBkey.pem
+    #in order to view them
+    openssl pkey -pubin -in <user>dhPUBkey.pem -text
+
+    #Now, Alice and Bob can generate their shared key
+    openssl pkeyutl -derive -inkey <curr-user>dhkey.pem -peerkey <user2>dhPUBkey.pem -out <curr-user>_secret.bin 
+    
+    #comparing the two generated keys you should not receive any output
+    cmp -b <curr-user>_secret.bin <user2>_secret.bin
+
+    #in order to see that the two keys are identical
+    xxd <user>_secret.bin
+
+\end{lstlisting}
+
+\section{Asymmetric Challenge Response Authentication}
+In this exercise, you’ll use the RSA functions (and the pkeyutl command) to implement a challenge-response protocol.
+
+Form two groups (Alice and Bob) and proceed in the following way:
+\begin{itemize}
+    \item Alice sends Bob her own public key rsa.pubkey.alice (if Alice and Bob are on the same PC it is not necessary to transfer any data, Alice just tells Bob the correct file on the file system to be used).
+    \item Bob generates a random string in the file random and encrypts it with Alice’s public key: the result obtained is the file challenge. Run the following OpenSSL commands required to perform this step, by using rand and pkeyutl
+    \begin{lstlisting}[style=bashStyle]
+openssl rand -out random 20
+openssl pkeyutl -encrypt -pubin -inkey rsa.pubkey.alice -in random -out challenge
+    \end{lstlisting}
+    \item Bob sens the file "challenge" to Alice.
+    \item Alice decrypts the challenge in the file response and sends it (or makes it available) to Bob. Use the following pkeyutl command to complete this step (the response to the challenge is saved in the file response):
+    \begin{lstlisting}[style=bashStyle]
+openssl pkeyutl -decrypt -inkey rsa.key.alice -in challenge -out response
+    \end{lstlisting}
+\end{itemize}
+
+\section{Authentication with Passwords}
+Storing passwords in clear within a database is a bad practice that leads to serious security concerns. This
+practice is equivalent to writing them down on a piece of digital paper. If an attacker breaks into the database,
+or rogue system administrators improperly access it, all credentials would be directly available. This will grant
+him access to all the users’ accounts. This section aims at showing, at first, how to mitigate this issue, and then
+how to perform a dictionary attack over the password hashes.
+
+\subsection{Password Hashing}
+\begin{lstlisting}[style=bashStyle]
+#fast way to compute a digest for a string
+encho -n "mypassword" | openssl dgst -sha256
+#the option -n is necessary to exclude \n (do not output the trailing newline)
+#or use
+openssl dgst -<hash_algorithm> -out <hashed_text> <ptext>
+
+\end{lstlisting}
+
+\subsection{Dictionary Attack}
+
+In this section, we will demonstrate how to perform a dictionary attack. A dictionary attack involves using a predefined list of potential passwords—known as a dictionary—to quickly compare a given password hash (or multiple hashes) against the entries in this list. The hash could be obtained from a security breach or stolen from a database.
+
+If the cracking software finds a match between the target hash and an entry in the dictionary, the attacker can successfully recover the original password. This technique is effective when the password is relatively common or simple, as the dictionary will likely contain the most frequently used passwords.
+
+% ------
+
+
+
+
+Use this Python code:
+\begin{lstlisting}[style=pythonStyle]
+import time
+import sqlite3
+
+test_hash = input("Please insert the password hash you'd like to test: ")
+dict_db = input("Filename containing the db file: ")
+start_time = time.time()
+
+# DB connection
+con = sqlite3.connect(dict_db)
+c = con.cursor()
+
+# Hash lookup
+c.execute('''
+          SELECT pwd FROM dict_attack WHERE hash = ?
+          ''', [test_hash])
+
+# Retrieve the password if the dictionary contains the hash
+result = c.fetchone()
+
+if result != None:
+    print("The password has been cracked --> "+result[0])
+else:
+    print("The attack failed!")
+
+print("Time elapsed: %s s" % (time.time() - start_time))
+
+\end{lstlisting}
+
+\begin{lstlisting}[style=bashStyle]
+python3 hash_dict.py 
+#will ask for an hash to resolve, try using
+9fd13a8c6c17da6b9ed242f788efd8fe9fd5143e3444091b8cc5aa6a9c263114
+#will ask to locate the database (we are using sqlite3), set the name
+#The output in our case is:
+The password has been cracked --> fishes
+Time elapsed: 0.002219676971435547
+
+#in order to inspect the dicitonary content: 
+sudo apt update && sudo apt install sqlite3 -y
+sqlite3 dictionary.db -header -column "SELECT * FROM dict attack LIMIT 10;"
+\end{lstlisting}
+
+\subsection{Password Salting}
+In this exercise, we will explore the salting mechanism used commonly to protect from dictionary attacks. Form a group of two hosts, Alice and Bob.
+
+On Bob (acting as a server) open a terminal and run the following commands:
+\begin{lstlisting}[style=bashStyle]
+sudo adduser test1 --disabled-password 
+#(press enter for default options)
+sudo mkpasswd --method=sha512crypt --salt=coolsalt 1234
+#you should see the following output
+$6$coolsalt$XMeYB41McYDfApgGicyIRK7JC4I.wThWxLwwOSbW7HMFXJZJFxMdsShTIsxoiy/yG2BKqqDIRH2Aasf/XDWks/
+#open the /etc/shadow file
+#In the entry corresponding to the user test1, modify the row in the following way (copy and paste the row):
+test1:$6$coolsalt$XMeYB41McYDfApgGicyIRK7JC4I.wThWxLwwOSbW7HMFXJZJFxMdsShTIsxoiy/yG2BKqqDIRH2Aasf/XDWks/:19674:0:99999:7:::
+\end{lstlisting}
+
+\subsection*{Shadow File}
+\begin{center}
+    (/etc/shadow)
+\end{center}
+Shadow file on a Linux system is used to store password hashes and other security-related information about system users. It is an essential file in the system’s authentication mechanism. This file is readable only by the root user for security reasons.
+
+    Each line in the /etc/shadow file corresponds to a user account and contains fields separated by colons (:). Here’s the general format:
+    \begin{lstlisting}[style=bashStyle]
+username:password_hash:last_changed:min_days:max_days:warn_days:inactive_days:expire_date:reserved
+    \end{lstlisting}
+
+
+Explanation of \texttt{/etc/shadow} Fields:
+
+\begin{enumerate}
+    \item \textbf{password\_hash:}
+    \begin{itemize}
+        \item Contains the hashed password.
+        \item Asterisk (\texttt{*}) or exclamation mark (\texttt{!}) indicates a disabled account.
+        \item Empty means no password is required.
+        \item Prefix: \(\$6\$\) \textrightarrow sha-512, \(\$5\$\) \textrightarrow sha-256, \(\$1\$\) \textrightarrow MD5, \(\$y\$\) \textrightarrow Yescrypt.
+    \end{itemize}
+
+    \item \textbf{last\_changed:}
+    \begin{itemize}
+        \item The number of days since January 1, 1970, when the password was last changed.
+    \end{itemize}
+
+    \item \textbf{min\_days:}
+    \begin{itemize}
+        \item Minimum number of days required between password changes (\texttt{0} = no restrictions).
+    \end{itemize}
+
+    \item \textbf{warn\_days:}
+    \begin{itemize}
+        \item Number of days before password expiration when the user is warned.
+    \end{itemize}
+
+    \item \textbf{inactive\_days:}
+    \begin{itemize}
+        \item Number of days after password expiration before the account is disabled.
+    \end{itemize}
+
+    \item \textbf{expire\_date:}
+    \begin{itemize}
+        \item Account expiration date (in days since January 1, 1970). Empty means no expiration.
+    \end{itemize}
+\end{enumerate}

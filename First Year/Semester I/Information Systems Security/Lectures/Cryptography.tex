@@ -77,7 +77,7 @@ The key features are:
     \item Is typically applied in the Encrypt-Decrypt-Encrypt (EDE) mode to achieve compatibility with DES when.
 \end{itemize}
 
-\subsubsection{EDE Mode}
+\subsubsection*{EDE Mode}
 In this mode, the data is first encrypted using the first key, then decrypted using the second key, and finally encrypted again using the third key (if a third key is present). This sequence of operations helps mitigate the vulnerabilities of DES by applying encryption multiple times.
 
 \begin{tcolorbox}[colback=blue!10!white, colframe=blue!50!white, title=Meet-in-the-Middle attack]
@@ -185,9 +185,57 @@ Padding modes are used in block cipher encryption schemes to handle plaintext th
     
 \end{figure}
 
-\subsubsection{Padding Techniques}
+\subsection*{Padding Techniques}
 \begin{itemize}
-    \item If the length is known, add null bytes as padding.
     \item Original DES Padding: bit pattern that started with a 1 bit, followed by many 0 bits.
+    \item One byte with value 128 (0x80) followed by null bytes.
+    \item Last byte indicates padding length.
+    \item Padding with explicit length:
+    \begin{itemize}
+        \item Null bytes, with the last byte indicating the padding length.
+        \item Only null bytes. \textcolor{Blue}{Schneier}
+        \item Bytes with value equal to Length. \textcolor{Blue}{SSL/TLS}
+        \item Random bytes. \textcolor{Blue}{SSH2}
+        \item Sequential numbers starting from 0x01. \textcolor{Blue}{IPSec/ESP}
+        \item Each byte is the $Length-1$.
+    \end{itemize}
 \end{itemize}
 
+\subsection*{Some Keynotes}
+\begin{itemize}
+    \item Minimal integrity control: If the key is incorrect or data is manipulated, the padding bytes will become incoherent.
+    \item Typically applied to large data, on the last fragment.
+    \item If the data length D is less than the block size B, ad-hoc techniques like CFB, OFB, or CTR are preferred instead of padding.
+    \item Even if the plaintext is an exact multiple of the block size, padding is still required to avoid errors in the interpretation of the last block.
+\end{itemize}
+
+\section{CTS}
+\begin{center}
+    (Cipher Text Stealing)
+\end{center}
+Allows the use of block algorithms without padding.
+\begin{itemize}
+\item The last (partial) block is filled with bytes from the second-to-last block, which are removed from the second-to-last block (making it partial).
+\item After encryption, the positions of the last and second-to-last blocks are swapped.
+\end{itemize}
+This method is particularly useful when the size of the data cannot be increased after encryption, such as in storage encryption.
+
+However, the computation time increases slightly.
+
+\begin{multicols}{2}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{Images/Cryptography/CTS_ECB.png}
+        \caption{CTS with ECB}
+    \end{figure}
+
+    \columnbreak
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{Images/Cryptography/CTS_CBC.png}
+        \caption{CTS with CBC}
+    \end{figure}
+    
+\end{multicols}

@@ -380,6 +380,7 @@ Key features:
 \begin{itemize}
     \item Centralized Authentication, Authorization, and Accounting (AAA) functionality, which can lead to issues such as a single point of failure if redundancy is not implemented.    
     \item Widely used for remote access, VPNs, and enterprise Wi-Fi networks.
+    \item Is used for communication between a NAS and a backend Authentication Server (AS).
     \item Relatively low security compared to modern protocols:
     \begin{itemize}
         \item Passwords may be transmitted using less secure methods (e.g., PAP).
@@ -416,8 +417,13 @@ The address of NAS1 is \textcolor{red}{not an email address}; it is an identifie
     \item DoS (Denial of Service) via Many NAS Requests from Fake NAS: A fake or compromised NAS could flood the AS with numerous requests, potentially overwhelming the server and causing a DoS. (\textcolor{Blue}{Server scalability}).
 \end{itemize}
 
+\begin{itemize}
+    \item Confidentiality of the data in the RADIUS request by masking the (user) password (with an XOR operation).
+    \item Protection form replay of RADIUS response, by binding the response to a specific request via a Request Authenticator.
+\end{itemize}
+
 \subsubsection{Data Protection}
-RADIUS uses MD5 hashing with a shared secret (KEY) to ensure both the integrity and authenticity of the communication between the Network Access Server (NAS) and the Authentication Server (AS). The shared secret is a pre-configured key that only the NAS and the AS know, and it is used to protect RADIUS messages.
+RADIUS uses MD5 hashing with a shared secret (KEY) (keyed-digest) to ensure both the integrity and authenticity of the communication between the Network Access Server (NAS) and the Authentication Server (AS). The shared secret is a pre-configured key that only the NAS and the AS know, and it is used to protect RADIUS messages.
 
 \hfill
 
@@ -434,7 +440,7 @@ The user’s password is not transmitted in plain text, but rather, it is “enc
         \text{password} \oplus \text{MD5}(\text{key}\ ||\ \text{authenticator})
     \end{equation*}
     \begin{itemize}
-        \item Authenticator: A unique value generated per request that helps prevent replay attacks and ensures the integrity of the data. Refer to the Authenticator section below for a more detailed explanation.
+        \item authenticator: A unique value generated per request that helps prevent replay attacks and ensures the integrity of the data. Refer to the Authenticator section below for a more detailed explanation.
     \end{itemize}
 \end{itemize}
 
@@ -469,7 +475,7 @@ There are different messages exchanged between the Network Access Server (NAS) a
 \end{figure}
 
 \subsubsection{Authenticator}
-In RADIUS, the Authenticator serves a crucial role in ensuring both the authentication of the server’s reply and the prevention of replay attacks. It also helps in masking sensitive information like passwords.
+In RADIUS, the Authenticator serves a crucial role in ensuring both the authentication of the server’s reply and the \underline{prevention of replay attacks}. It also helps in masking sensitive information like passwords.
 
 \hfill
 
@@ -1508,4 +1514,91 @@ A DNS shadow server is a type of DNS server used for security, monitoring or mal
 If the attack occurs between nameservers, it can lead to a Distributed Denial of Service (DDoS) attack.
 \begin{figure}[H]
   \includegraphics[width=\linewidth]{Images/NetSec/dns_shadow_server.png}
-  \caption{DNS shad
+  \caption{DNS shadow server usages.}
+\end{figure}
+
+\subsection{Name-address Translation}
+This figure \ref{fig:name_address_trans} explains the vulnerabilities and security risks associated with the Name-Address Translation System, typically implemented in DNS (Domain Name System) architectures.
+
+\begin{center}
+    \textbf{The process:}
+\end{center}
+\begin{enumerate}
+    \item App \#1 Initiates a Request: Wants to resolve a domain name (e.g., www.example.com) to an IP address. It sends the request to the Operating System (OS) through the Name Switch.
+    \item Name Switch: 	The Name Switch in the OS determines how the domain name should be resolved. \textcolor{Red}{Unauthorized configurations because default options can be changed.} It checks the following in order:
+    \begin{itemize}
+        \item Local Data (e.g., /etc/hosts): If the name exists in local configuration files, it uses this data. \textcolor{Red}{Data corruption for the local data (e.g., file /etc/hosts)}
+        \item If the name is not found locally, it forwards the query to the Resolver.
+    \end{itemize}
+    \item Resolver: The Resolver handles DNS queries on behalf of the OS. \textcolor{Red}{Unauthorized configurations, queries may be redirected to malicious servers.}
+    \begin{itemize}
+        \item It forwards the query to a (Recursive) Caching Server for further resolution. \textcolor{Red}{Server impersonation and no authentication, attackers may impersonate authoritative servers, providing fraudulent responses.}
+    \end{itemize} 
+    \item Recursive Caching Server: checks its Cache to see if it already has the requested domain name’s IP address. \textcolor{Red}{Cache poisoning, attackers inject false data into the cache.}
+    \begin{itemize}
+        \item Cache Hit: If the result exists in the cache, it returns the IP address to the resolver.
+        \item Cache Miss: If the result is not in the cache, it queries the authoritative DNS servers.
+    \end{itemize}
+    \item  Zone Master (Primary) and Zone Slave (Secondary):
+    \begin{itemize}
+        \item The Zone Master responds with the authoritative answer.
+        \item The Zone Slave (Secondary) might also serve the query if it holds a copy of the zone file.
+        \item Risks:
+        \begin{itemize}
+            \item \textcolor{Red}{Data Corruption}: Errors in the Zone File on the master or slave could propagate incorrect information.
+            \item \textcolor{Red}{Unauthorized Updates}: Without proper authentication, attackers can modify the DNS records dynamically.
+            \item \textcolor{Red}{Server Impersonation}: Attackers can masquerade as authoritative servers and inject false data.
+        \end{itemize}
+    \end{itemize}
+    \item Response Propagation: Once the Recursive Caching Server obtains the correct IP address, it sends the result back to the Resolver. The Resolver delivers the resolved IP address to the Name Switch, which forwards it to App \#1.
+\end{enumerate}
+
+\begin{tcolorbox}[colback=blue!10!white, colframe=blue!50!white, title=Dynamic Updates]
+    Dynamic updates simplify DNS management by allowing DNS records to be modified in real time, eliminating the need to manually edit zone files. This feature is particularly useful in dynamic network environments where devices frequently join or leave the network, such as with DHCP (Dynamic Host Configuration Protocol).
+    How Dynamic Updates work:
+    \begin{itemize}
+        \item App (or Client) Requests an Update: When a device obtains an IP address from a DHCP server, it sends a request to register its hostname and IP address with the DNS server.
+        \item Zone Master Handles the Update: The Zone Master (Primary) DNS server processes the request. The updated zone file may then be synchronized with any Zone Slaves (Secondary) to ensure consistency.
+    \end{itemize}
+
+    When \textcolor{Red}{no authentication mechanisms} are in place for dynamic updates, the system becomes vulnerable to \textcolor{Red}{unauthorized updates}.
+\end{tcolorbox}
+
+\begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=Beware]
+    Query Privacy: Without encryption, the domain name query can be intercepted during transit.
+\end{tcolorbox}
+\begin{figure}[H]
+  \includegraphics[width=\linewidth]{Images/NetSec/name_address_translation.png}
+  \caption{Name-address translation process.}
+  \label{fig:name_address_trans}
+\end{figure}
+
+
+\subsection{DoT and DoH}
+\begin{center}
+    (DNS-over-TLS \& DNS-over-HTTPS)
+\end{center}
+
+Apart from attacks against the nameservers, DNS has a \textbf{user privacy problem} for the queries:
+\begin{itemize}
+    \item Queries \textbf{can be read while in transit}.
+    \item Queries \textbf{can be read and logged by the nameserver}.
+\end{itemize}
+
+\textbf{DNS-over-TLS (DoT)}:
+\begin{itemize}
+    \item Query and response are encapsulated in a secure \textbf{TLS tunnel}.
+    \item However, it is still evident that it’s a \textbf{DNS exchange}.
+\end{itemize}
+
+\textbf{DNS-over-HTTPS (DoH) (RFC-8484)}:
+\begin{itemize}
+    \item Query and response are part of a normal \textbf{HTTPS exchange}.
+    \item Externally, it looks like visiting a secure web page.
+\end{itemize}
+
+\textbf{Well-known service providers of DoH/DoT}:
+\begin{itemize}
+    \item Cloudflare (\texttt{1.1.1.1}).
+    \item Google (\texttt{8.8.8.8} and \texttt{8.8.4.4}).
+\end{itemize}

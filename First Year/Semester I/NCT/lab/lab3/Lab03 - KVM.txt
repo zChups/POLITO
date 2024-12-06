@@ -1,0 +1,16 @@
+#cloud-config
+users:
+  - default
+  - name: ubuntu
+    ssh_authorized_keys:
+      - ssh-rsa AAAA...DSHEx crownlabs@cloud-kvm
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: sudo
+    shell: /bin/bash
+# Password for the 'default' user (i.e., 'ubuntu' in Ubuntu cloud images)
+password: ubuntu
+# Password does not have to be changed at first login
+chpasswd: { expire: false }
+# Uncomment this line if you want to use username/password when
+#  logging in also from network (ssh)
+#ssh_pwauth: true
