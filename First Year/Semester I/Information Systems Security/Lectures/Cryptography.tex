@@ -36,7 +36,7 @@ The message in its original, unencrypted form is called plaintext (or cleartext)
     \caption{Example of symmetric encryption}
 \end{figure}
 
-\section{Symmetric Block Encryption Algorithms}
+\subsection{Symmetric Block Encryption Algorithms}
 Block encryption refers to ciphers that process fixed-size blocks of data (e.g., 128 bits) at a time.
 
 \begin{figure}[H]
@@ -45,9 +45,9 @@ Block encryption refers to ciphers that process fixed-size blocks of data (e.g.,
 \end{figure}
 
 
-\subsection{DES}
+\subsubsection{Data Encryption Standard}
 \begin{center}
-    (Data Encryption Standard - Obsolete because of short key length)
+    (DES - Obsolete because of short key length)
 \end{center}
 Is a symmetric-key block cipher that was widely used for data encryption in the past. It was developed in the 1970s by IBM.
 
@@ -58,7 +58,7 @@ The key features are:
     \item Efficient in hardware: Requires only XOR, shift and permutation.
 \end{itemize}
 
-\subsection{Triple DES}
+\subsubsection{Triple DES}
 \begin{center}
     (3DES or TDES)
 \end{center}
@@ -85,7 +85,28 @@ In this mode, the data is first encrypted using the first key, then decrypted us
     For more details, refer to Appendix A.
 \end{tcolorbox}
 
-\section{Application of Block Algorithms}
+\subsubsection{Advanced Encryption Standard}
+\begin{center}
+    AES.
+\end{center}
+In order to replace DES.
+
+\begin{itemize}
+    \item Symmetric block cipher.
+    \item Developed by Joan Daemen and Vincent Rijmen.
+    \item Key features:
+    \begin{itemize}
+        \item Block size: 128 bits.
+        \item Key length: 128, 192, or 256 bits.
+    \end{itemize}
+\end{itemize}
+
+\begin{tcolorbox}[colback=blue!10!white, colframe=blue!50!white]
+Ciphers are like wine: the older, the better.
+\end{tcolorbox}
+
+
+\subsection{Application Modes for Block Algorithms}
 We should answer a question:
 \begin{tcolorbox}[colframe=lightblue]
     \begin{center}
@@ -100,7 +121,7 @@ If the answer is:
     \item Otherwise: Padding, Cipher FeedBack (CFB), Output FeedBack (OFB) or Counter Mode (CTR).
 \end{itemize}
 
-\subsection{Electronic Code Book}
+\subsubsection{Electronic Code Book}
 \begin{center}
     (ECB)
 \end{center}
@@ -136,7 +157,7 @@ Key features:
 \end{itemize}
 
 \clearpage
-\subsection{Cipher Block Chaining}
+\subsubsection{Cipher Block Chaining}
 
 \begin{center}
     (CBC)
@@ -173,7 +194,7 @@ Key features:
     \end{itemize} 
 \end{itemize}
 
-\subsection{Padding}
+\subsubsection{Padding}
 \begin{center}
     (aligning, filling)
 \end{center}
@@ -185,7 +206,7 @@ Padding modes are used in block cipher encryption schemes to handle plaintext th
     
 \end{figure}
 
-\subsection*{Padding Techniques}
+\subsubsection*{Padding Techniques}
 \begin{itemize}
     \item Original DES Padding: bit pattern that started with a 1 bit, followed by many 0 bits.
     \item One byte with value 128 (0x80) followed by null bytes.
@@ -201,7 +222,7 @@ Padding modes are used in block cipher encryption schemes to handle plaintext th
     \end{itemize}
 \end{itemize}
 
-\subsection*{Some Keynotes}
+\subsubsection*{Some Keynotes}
 \begin{itemize}
     \item Minimal integrity control: If the key is incorrect or data is manipulated, the padding bytes will become incoherent.
     \item Typically applied to large data, on the last fragment.
@@ -209,9 +230,9 @@ Padding modes are used in block cipher encryption schemes to handle plaintext th
     \item Even if the plaintext is an exact multiple of the block size, padding is still required to avoid errors in the interpretation of the last block.
 \end{itemize}
 
-\section{CTS}
+\subsubsection{Cipher Text Stealing}
 \begin{center}
-    (Cipher Text Stealing)
+    (CTS)
 \end{center}
 Allows the use of block algorithms without padding.
 \begin{itemize}
@@ -239,3 +260,1388 @@ However, the computation time increases slightly.
     \end{figure}
     
 \end{multicols}
+
+\subsubsection{Counter Mode}
+\begin{center}
+    (CTR)
+\end{center}
+An \textit{operation mode} that modifies a block cipher to encrypt N bits at a time (often N=1). It does not require padding (the encryption does not depend on the block length) and allows random direct access to any ciphertext block (no dependencies between blocks). Requires a \textbf{nonce} and a \textbf{counter}, combined by a suitable function (concatenation, XOR, etc.) to generate the input block.
+\begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=Beware]
+One transmission error will generate a decryption error in the same position in the plaintext.
+\end{tcolorbox}
+
+Key features:
+\begin{itemize}
+    \item The nonce is a random number that should never be reused with the same key.
+    \item The counter is a value that is incremented for each block.
+    \item The nonce and counter are combined to generate the input block (exactly one block size of data).
+    \item The input block is encrypted using the block cipher.
+    \item The ciphertext is XORed with the plaintext to produce the encrypted data.
+    \item The leftmost group (meaning the first N bits) are extrapolated from the block and are XORed with the corresponding $P_i$ group, which in turn generates the corresponding $C_i$ group.
+    \item The same processo is repeated for each successive plaintext group. with the counter incremented each time.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{Images/Cryptography/CTR_ENC.png}
+    \caption{CTR Mode}
+\end{figure}
+
+\begin{tcolorbox}[colback=blue!10!white, colframe=blue!50!white, title=CTR as a stream cipher]
+The byte-oriented CTR mode of a block algorithm may be considered a stream algorithm.
+\end{tcolorbox}
+
+\subsection{Symmetric Stream Encryption Algorithms}
+Stream encryption refers to ciphers that process data one bit or byte at a time.
+
+Main features:
+\begin{itemize}
+    \item Work on a data stream without requiring the split into blocks
+    \item Ideal algorithm: One-Time Pad (OTP), requires a key as long as the plaintext to protect.
+    \item Real algorithms: Use pseudo-random number generators (PRNGs) to generate a key stream, synchronized between sender and receiver.
+    \item Old: RC4, SEAL.
+    \item Modern: Salsa20, ChaCha20.
+\end{itemize}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{Images/Cryptography/Stream_Cipher.png}
+    \caption{Stream (real) algorithm process.}
+\end{figure}
+
+\subsubsection{Salsa20}
+\begin{center}
+Symmetric stream cipher.
+\end{center}
+
+Key features:
+\begin{itemize}
+    \item 128 or 256-bit Key.
+    \item Base operation: 32-bit ARX (Addition, Rotation, XOR).
+    \item Base function: f(Key \textcolor{Blue}{(256 bits)}, Nonce\textcolor{Blue}{ 64}, Counter\textcolor{Blue}{ 64}) = 512-bit keystream block.
+    \item 64-byte blocks of data processed.
+    \item Allows random access decryption: Since each block is encrypted independently, it is possible to decrypt any block at random without needing to decrypt the preceding blocks.
+\end{itemize}
+\subsubsection{ChaCha20}
+An improved version of Salsa20, designed to provide better security and performance. So inherit the same features as Salsa20.
+\begin{center}
+    ChaCha20 and Poly1305 for IETF protocols.
+\end{center}
+Slightly modifications to the original specification:
+\begin{itemize}
+    \item 96 bit nonce.
+    \item 32 bit lock counter (may start from 1, rather than 0, if the first block is used as an authentication tag, as in AEAD).
+    \item Hence, a limit of $2^{32} \cdot \ 64$ byte blocks. That corresponds to 256 GB of data (amount of data that can be encrypted with a single key and nonce pair) with a 64-byte block size.
+\end{itemize}
+
+\subsection*{Attempts to Perform an Exhaustive Search}
+\begin{center}
+    Kerchoff's conditions.
+\end{center}
+
+If:
+\begin{itemize}
+    \item The encryption algorithm was well-designed.
+    \item The keys (N-bit long) are kept secret.
+    \item The algorithm is executed by a trusted party (e.g., no malware).
+\end{itemize}
+\dots then the only possible attack is the brute force (exhaustive search) attack, which requires $2^N$ attempts.
+
+\[
+    \boxed{T \propto 2^N}
+\]
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{Images/Cryptography/crypto_key_lens.png}
+    \caption{Key length of cryptographic algorithms}
+\end{figure}
+
+\subsection{Key Distribution for Symmetric Cryptography}
+\raggedcolumns
+\begin{multicols}{2}
+
+\noindent For a complete pairwise private communication between N parties, we need:
+\begin{center}
+    $\displaystyle\frac{N \cdot (N-1)}{2}$ keys.
+\end{center}
+
+\columnbreak
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{Images/Cryptography/key_dist_symm.png}
+        \caption{Key Distribution}
+    \end{figure}
+\end{multicols}
+
+
+Distribution Methods:
+\begin{itemize}
+    \item Out-Of-Band (OOB): Keys are exchanged using a separate, secure communication channel (e.g., in person or using a different secure network).
+    \item Key exchange algorithms.
+\end{itemize}
+
+\section{Asymmetric Cryptography}
+Asymmetric cryptography, also known as public-key cryptography, uses a pair of keys: a public key and a private key. The public key is used for encryption, while the private key is used for decryption. This allows secure communication without the need to share a secret key beforehand.
+
+\vspace{0.5cm}
+
+\noindent Main features:
+\begin{itemize}
+    \item Each person has a different key pair.
+    \item Key pair: Public key (PK) and Private key (SK).
+    \item \textcolor{Red}{Keys in the pair have inverse functionality: what one key encrypts, the other key decrypts.}
+    \item Used to distribute secret keys and to create electronic signatures (with hashing).
+    \item Main algorithms: RSA, DSA.
+\end{itemize}
+
+\begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=Beware]
+Don't use asymmetric encryption to encrypt large data set, because of the computational cost.
+\end{tcolorbox}
+
+\subsection*{Example of Asymmetric Encryption}
+Consider a scenario where Alice wants to send a confidential message to Bob using asymmetric encryption. The steps are as follows:
+
+\begin{enumerate}
+    \item Bob generates a key pair: a public key (PK\textsubscript{Bob}) and a private key (SK\textsubscript{Bob}).
+    \item Bob shares his public key (PK\textsubscript{Bob}) with Alice.
+    \item Alice encrypts her message (M) using Bob's public key (PK\textsubscript{Bob}):
+    \[
+        C = \text{enc}(PK\textsubscript{Bob}, M)
+    \]
+    \item Alice sends the ciphertext (C) to Bob.
+    \item Bob decrypts the ciphertext (C) using his private key (SK\textsubscript{Bob}):
+    \[
+        M = \text{dec}(SK\textsubscript{Bob}, C)
+    \]
+\end{enumerate}
+
+This ensures that only Bob can decrypt the message, as only he has the corresponding private key.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{Images/Cryptography/asymmCrypto.png}
+    \caption{Example of asymmetric encryption}
+\end{figure}
+
+
+\subsection{Digital Signature - The Idea}
+\begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=Beware]
+The idea has no concreteness (and actual dsig is more complex), at the exam you will explain that in practice.
+\end{tcolorbox}
+\begin{center}
+Asymmetric encryption of data made with the private key of the sender. \\ 
+Look at the "Authentication by Digest and Asymmetric Encryption" section for further explanation.
+\end{center}
+
+Key features:
+\begin{itemize}
+    \item The idea provides data authentication.
+    \item The actual digital signature offers also integrity: Usually data is not directly encrypted but only its digest (hash).
+\end{itemize}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{Images/Cryptography/basic_digital_signature.png}
+    \caption{Basic idea of digital Signature}
+\end{figure}
+
+\begin{tcolorbox}[colback=blue!10!white, colframe=blue!50!white, title=Confidentiality Without Shared Secrets]
+It is possible to generate a secret message for a particular receiver given only its public key.
+\end{tcolorbox}
+
+\subsection{Public-Key Algorithms}
+Public-key algorithms use asymmetric cryptography to encrypt and decrypt data. The most common public-key algorithms are RSA and DSA.
+
+\subsubsection{Rivest-Shamir-Adleman}
+\begin{center}
+    (RSA)
+\end{center}
+
+Used for digital signature and confidentiality w/o shared secrets.
+
+\begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=Beware]
+    Its security relies on the difficulty of factoring large composite numbers.\footnote{Reference appendix A, Factorization Attack.}
+\end{tcolorbox}
+
+\begin{center}
+    \textbf{The Algorithm}
+\end{center}
+
+Main features:
+\begin{itemize}
+    \item Public module $N = P \cdot Q$, known to anybody.
+    \begin{itemize}
+        \item $P, Q$ are prime numbers, large and secret (deleted/discarded after their usage, dangerous if someone can find them!).
+    \end{itemize} 
+    \item Exponents:
+    \begin{itemize}
+        \item Public exponent: $E$. Arbitrarily chosen, $1 < E < \phi(N)$.
+        \[
+            \phi(N) = (P-1) \cdot (Q-1)
+        \]
+        \item Private exponent: $D$. Calculated as $D = E^{-1}\cdot \mod \phi(N)$\footnote{Modulus as the remainder of the integer division.}.
+    \end{itemize}
+    \item Keys:
+    \begin{itemize}
+        \item Public key: $(N, E)$.
+        \item Private key: $(N, D)$.
+        \item Key length: size of the public module.
+    \end{itemize}
+\end{itemize}
+
+\noindent\textcolor{Red}{Be aware:} RSA may cipher/decipher only data whose value is less than the value of the module N (it's a sort of block algorithm, with block size equal to the key size).
+
+\noindent Main aspects:
+\begin{itemize}
+    \item Plaintext\_size: P < N.
+    \item Encryption: $C = P^E \mod N$.
+    \item Decryption: $P = C^D \mod N$.
+    \item The roles of $E$ and $D$ are interchangeable.
+    \[
+        (P^E)^D \mod N = (P^D)^E \mod N = P
+    \]
+\end{itemize}
+
+\begin{center}
+    \textbf{Computational Optimization}
+\end{center}
+
+Usually, all public keys have E=3, 17 or 65537. Because the power operation is very easy on numbers with two bits set to one.
+\begin{itemize}
+    \item High speed of the encryption operation and in signature verification.
+\end{itemize}
+Operations involving the private key (signing and decrypting) are slow. So, the CRT (\textbf{Chinese Remainder Theorem}) is used to speed up 4x the decryption operation.
+Thanks to the equivalence: 
+\[
+    f(x) \mod N = (f(x) \mod P)\ \&\ (f(x) \mod Q)
+\]
+
+
+\subsubsection{Digital Signature Algorithm}
+\begin{center}
+    (DSA)
+\end{center}
+Used for digital signature only: Because it uses a one-way lossy compression function, so original plaintext cannot be recovered.
+
+Main features:
+\begin{itemize}
+    \item Modular exponentiation.
+    \item For encryption, use the El-Gamal algorithm.
+\end{itemize}
+
+\begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=Beware]
+    Algorithm based on discrete logarithms. It is mainly vulnerable due to mathematical weaknesses or implementation flaws.\footnote{Reference appendix A, Logarithmic Attacks.}
+\end{tcolorbox}
+
+\subsection{Key Distribution for Asymmetric Cryptography}
+\begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=Beware]
+Private key must be kept secret. Public key can be shared as widely as possible.
+\end{tcolorbox}
+
+\noindent For a complete pairwise private communication between N parties, we can follow three strategies:
+\begin{enumerate}
+    \item Exchange of keys OOB.
+    \item Using asymmetric algorithms.
+    \item Distribution of the public-key by means of a specific data structure named public-key certificate (equals to digital certificate).
+    \begin{itemize}
+        \item The certificate issuer must be a trusted entity.
+        \item The certification format is defined by the X.509 standard.
+    \end{itemize} 
+    \item Diffie-Hellman (DH) key exchange.
+    \item Elliptic Curve Cryptography (ECC).
+\end{enumerate}
+
+\subsubsection{Secret Key Exchange by Asymmetric Algorithms}
+Confidentiality without shared secrets is often used to send the secret key for symmetric encryption. In the top branch of the figure, X sends the encrypted message to Y using the shared key (symmetric encryption). In the bottom branch, X sends the secret key to Y using Y's public key (asymmetric encryption).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{Images/Cryptography/pk_exchange.png}
+    \caption{Secret key exchange by asymmetric algorithms}
+\end{figure}
+
+\subsection{Diffie-Hellman Key Exchange}
+\begin{center}
+    (DH) - Modular Arithmetic.
+\end{center}
+Main features:
+\begin{itemize}
+    \item Frequently used to agree on a secret key (key agreement protocol).
+    \item Resistant to sniffing attacks.
+    \item If the attacker can manipulate the data then it is possible to make a man-in-the-middle attack.\footnote{Reference appendix A}
+    \begin{itemize}
+        \item To avoid this, the Diffie-Hellman key exchange is often combined with a digital signature algorithm (authentication).
+        \item We need certificates for DH keys.
+        \item Authenticated DH is MQV (Menezes-Qu-Vanstone).
+    \end{itemize}
+\end{itemize}
+
+\begin{center}
+    \textbf{The Algorithm}
+\end{center}
+\begin{multicols}{2}
+    \begin{center}
+        \boxed{\textbf{A}}
+        \vspace{0.2cm}
+        \hrule
+    \end{center}
+
+\columnbreak
+\columnseprule=1pt
+
+    \begin{center}
+        \boxed{\textbf{B}}
+        \vspace{0.2cm}
+        \hrule
+    \end{center}
+    
+\end{multicols}
+
+\begin{center}
+    A and B agree on two numbers: a large prime number P and a base G (typically 2,3 or 5). Such that:
+    \[
+        1 < G < P
+    \]
+    \textcolor{Blue}{(The number of bits of P is the key length)}
+\end{center}
+
+\begin{multicols}{2}
+    \centering
+    Arbitrarily chooses a secret number (integer) x > 0.
+    \[
+        X= G^x \mod P
+    \]
+    \columnseprule=1pt
+    \columnbreak
+    
+    Arbitrarily chooses a secret number (integer) y > 0.
+    \[
+        Y= G^y \mod P
+    \]
+\end{multicols}
+
+\begin{center}
+    A and B exchange (publish) X and Y.
+\end{center}
+
+\begin{multicols}{2}
+    \centering
+    Calculates the shared secret key: \\ $K_A = Y^x \mod P$.
+    
+    \columnseprule=1pt
+    \columnbreak
+
+    Calculates the shared secret key: \\ $K_B = X^y \mod P$.
+\end{multicols}
+
+\vspace{1 cm}
+
+So the shared key derived by two parties is: $K_A = K_B=G^{x\cdot y}\mod P$.
+
+\subsection{Elliptic Curve Cryptography}
+\begin{center}
+    (ECC)
+\end{center}
+Main features:
+\begin{itemize}
+    \item Instead of using modular arithmetic, the operations are executed on the surface of a 2D (elliptic) curve. So, the pair of numbers is generated by the curve's equation. 
+    \item Only the curve's equation is public.
+    \item Digital signature: ECDSA.
+    \item Key exchange: ECDH.
+    \item Authenticated key agreement: ECMQV (currently patented).
+    \item Key distribution: EC Integrated Encryption Scheme (ECIES).
+\end{itemize}
+
+\begin{center}
+    \textbf{Arithmetics on Elliptic Curves}
+\end{center}
+
+Considering a curve: $y^2 = x^3 + ax + b \pmod{p}$ over a finite field\footnote{The arithmetic is performed over a finite field modulo a prime number  p .} $\mathbb{F}_p$.\\
+With the condition\footnote{The condition ensures the curve is non-singular, meaning it does not have any cusps or self-intersections.}: $4a^3 + 27b^2 \neq 0$.\\
+Compute $R=(x,y)=P+Q$ given:
+\begin{itemize}
+    \item $P=(x_P,y_P)$.
+    \item $Q=(x_Q,y_Q)$.
+\end{itemize}
+$x= \lambda^2 - x_P - x_Q$ and $y= \lambda(x_P - x) - y_P$ such that the slope $\lambda$ is:
+\begin{itemize}
+    \item $\lambda = \frac{y_P - y_Q}{x_P - x_Q}$ if $P \neq Q$.
+    \item $\lambda = \frac{3x_P + a}{2y_P}$ if $P = Q$.
+\end{itemize}
+
+\vspace{1cm}
+
+So we can compute: Addition of two points and Multiplication of a point by a scalar.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/Cryptography/ec_arith.png}
+    \caption{Elliptic Curve arithmetics}
+\end{figure}
+
+\begin{tcolorbox}[colback=blue!10!white, colframe=blue!50!white]
+    Increased computational complexity can allow for shorter key lengths while maintaining the same level of security.
+\end{tcolorbox}
+
+\subsubsection{Elliptic Curve Diffie-Hellman}
+\begin{center}
+    (ECDH)
+\end{center}
+
+\begin{multicols}{2}
+    \begin{center}
+        \boxed{\textbf{A}}
+        \vspace{0.2cm}
+        \hrule
+    \end{center}
+
+\columnbreak
+\columnseprule=1pt
+
+    \begin{center}
+        \boxed{\textbf{B}}
+        \vspace{0.2cm}
+        \hrule
+    \end{center}
+    
+\end{multicols}
+
+\begin{center}
+    A and B select the same elliptic curve and a point G of its. Such that:
+    \[
+         G \in curve
+    \]
+\end{center}
+
+\begin{multicols}{2}
+    \centering
+    Arbitrarily chooses a secret number x.
+    \[
+        X= G \cdot x
+    \]
+    \columnseprule=1pt
+    \columnbreak
+    
+    Arbitrarily chooses a secret number y.
+    \[
+        Y= G \cdot y
+    \]
+\end{multicols}
+
+\begin{center}
+    A and B exchange (publish) X and Y.
+\end{center}
+
+\begin{multicols}{2}
+    \centering
+    Calculates the shared secret key: \\ $K_A = Y \cdot x$.
+    
+    \columnseprule=1pt
+    \columnbreak
+
+    Calculates the shared secret key: \\ $K_B = X\cdot y$.
+\end{multicols}
+
+\begin{tcolorbox}[colback=blue!10!white, colframe=blue!50!white]
+    Computing a power would add much more complexity to the algorithm. So the shared key is computed by multiplying a point by a scalar.
+\end{tcolorbox}
+
+\section{Message Integrity}
+A person that intercepts an encrypted communication cannot read it, but can modify it. So, we need to ensure the \underline{integrity} of the message.
+
+\subsection{Hash Functions}
+
+In order to ensure the integrity of a message, sender and receiver can check if the message digest is the same. The message digest is a fixed-size string mainly generated by a hash function from the message. The hash function is a one-way function, meaning that it is computationally infeasible to reverse the process and obtain the original message from the digest.
+
+\vspace{0.1cm}
+
+\noindent The hash function must be:
+\begin{itemize}
+    \item Fast to compute.
+    \item Have pre-image resistance: It is computationally infeasible to find the original message from the hash.
+    \item Have collision resistance: It is computationally infeasible to find two different messages that produce the same hash.
+\end{itemize}
+
+\begin{center}
+    \subsubsection*{The Algorithm (Cryptography)}
+\end{center}
+Usually hash functions calculated digests through the following steps:
+\begin{itemize}
+    \item Split the message $M$ into $N$ blocks.
+    \[
+        M = M_1 || M_2 || \dots || M_N
+    \]
+    \item Iteratively apply a base function $f$ to each block.
+    \[
+        V_k = f(V_{k-1}, M_k) \quad \text{for} \quad k=1,2,\dots,N
+    \]
+    \[  
+        \text{where} \quad V_0 = IV
+    \]
+    \item The final digest is the last value of the iteration $V_N$.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{Images/Cryptography/hash_f.png}
+    \caption{Hash function process}
+\end{figure}
+
+\subsubsection*{Padding in Cryptographic Hash Functions}
+Each function defines its own padding method.
+
+For example, the SHA-1 function has 512-bit blocks and uses the following padding:
+\begin{itemize}
+    \item Block size $B = 512$ bits and fragment (if the message length is not a multiple of 512 bits) size $L < B$ bits.
+    \item Append a bit with value 1, followed by $K$ bits with value 0, where $K = B - L - 64$.
+    \item The last 64 bits are the length of the original message.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\linewidth]{Images/Cryptography/crypto_hash_functions.png}
+    \caption{Cryptographic hash functions}
+\end{figure}
+
+\begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=Beware]
+SHA-2 is a family of hash functions. You must always specify the exact algorithm (SHA-256, SHA-512, etc.).
+\end{tcolorbox}
+
+\subsubsection*{SHA-2}
+\begin{center}
+    (Secure Hash Algorithm 2)
+\end{center}
+SHA-2 is a family of cryptographic hash functions that includes SHA-224, SHA-256, SHA-384, SHA-512. The SHA-256 and SHA-512 algorithms are the most commonly used. As a quick fix after the SHA-1 attack, the SHA-2 family was developed by making the digest size larger.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|}
+        \hline
+        \textbf{Algorithm} & \textbf{Word Size} & \textbf{Output Size} \\
+        \hline
+        SHA-224 & 32-bit & 224 bits \\
+        \hline
+        SHA-256 & 32-bit & 256 bits \\
+        \hline
+        SHA-384 & 64-bit & 384 bits \\
+        \hline
+        SHA-512 & 64-bit & 512 bits \\
+        \hline
+    \end{tabular}
+    \caption{SHA-2 Family Algorithms}
+\end{table}
+
+SHA-224/-384 are the truncation of SHA-256/-512.
+
+\subsection{Digest Length}
+The length of the digest is important because it determines the probability of a collision (= \textcolor{Blue}{Aliasing}). 
+
+If the algorithm is well-designed, and generates a digest of $N$ bits, \\ the probability of aliasing is:
+\[
+    P_A \propto \frac{1}{2^{N}}
+\]
+\dots thus, digests with many bits are required to avoid aliasing.
+
+\subsection{The Birthday Paradox}
+\begin{center}
+    (Collision Probability, basic problem of hashing)
+\end{center}
+
+\begin{multicols}{2}
+    The birthday paradox is a probability problem that asks how many people need to be in a room for the probability of two people sharing the same birthday to be greater than 50\%. The same concept applies to hash functions: the probability of two different messages having the same hash is higher than expected.
+
+    \vspace{0.5cm}
+
+    \begin{center}
+        Reference Appendix A for the Birthday Attack.
+    \end{center}
+
+\columnbreak
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{Images/Cryptography/bd_paradox.png}
+        \caption{Birthday Paradox}
+    \end{figure}
+\end{multicols}
+
+
+\begin{tcolorbox}[colback=blue!10!white, colframe=blue!50!white, title=Insecure Hash Functions]
+    An $N$-bit hash function is considered insecure when more than $2^{N/2}$ digests are generated, because the probability to have two messages with the same digests is greater than 50\%. 
+\end{tcolorbox}
+
+\textcolor{red}{Be aware:} A cryptosystem is balanced when the encryption and digest algorithms have the same resistance to attacks. SHA-256 and SHA-512 have been designed for use respectively with AES-128 and AES-256.
+
+\begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=Beware]
+    A system is only as secure as its weakest link.
+\end{tcolorbox}
+
+\subsubsection*{SHA-3}
+\begin{center}
+    (Secure Hash Algorithm 3, named Keccak (pronounce: \textit{catch-ack}))
+\end{center}
+The SHA-3 family was developed as a backup to SHA-2 in case of a successful attack. The design of SHA-3 is completely different from that of SHA-2 and SHA-1.
+
+\vspace{0.5cm}
+
+\noindent Key features:
+\begin{itemize}
+    \item Elegant design.
+    \item Run well on many computing devices.
+    \item Higher performance in hardware implementations than SHA-2 or any of the other finalists.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{Images/Cryptography/sha_3.png}
+    \caption{SHA-3 family}
+\end{figure}
+
+\vspace{0.5cm}
+
+And more (NIST SP: 800-185) SHA-3 family includes:
+\begin{itemize}
+    \item cSHAKE128, cSHAKE256: Customizable domain parameters.
+    \item KMAC128, KMAC256: Keyed digest functions.
+    \item TupleHash: Hash of a tuple, where sequence matters.
+    \item ParallelHash: Fast hashing for multicore processors.
+\end{itemize}
+
+\section{Key Derivation Functions}
+\begin{center}
+    (KDF)
+\end{center}
+A cryptographic key must be random (each bit has a 50\% probability of being 0 or 1), but users typically choose passwords (or better, \textbf{passphrases}) guessable and not random. 
+
+Main elements of a Key Derivation Function:
+\[
+    \text{KDF} = \text{KDF (P, S, I)}
+\]
+
+\begin{itemize}
+    \item P: Passphrase (e.g. password).
+    \item S: Salt, to make K difficult to guess given P.
+    \item I: how many times (Iterations) the hash function is applied (to slow down the computation and make life complex for attackers).
+\end{itemize}
+
+\vspace{0.2cm}
+
+Some KDF based upon cryptographic hash functions:
+\begin{itemize}
+    \item PBKDF2 (Password-Based Key Derivation Function 2, RFC-2898).
+    \begin{itemize}
+        \item Uses SHA-1, $|S| \ge 64$, $|I| \ge 1000$.
+    \end{itemize}
+    \item HKDF (HMAC-based Extract-and-Expand Key Derivation Function, RFC-5869).
+\end{itemize}
+
+\subsection{Password-Based Key Derivation Function 2}
+\begin{center}
+    (PBKDF2, RFC-8018)
+\end{center}
+
+Main features:
+\begin{itemize}
+    \item Replaces PBKDF1, due to key length limitations ($\le 160$ bits).
+\end{itemize}
+Main elements to compute the derived key (DK):
+\[
+    \text{DK} = \text{PBKDF2 (PRF, PWD, Salt, C, dkLen)}
+\]
+\begin{itemize}
+    \item PRF: Pseudo-Random Function with output length hLen(e.g. a keyed HMAC = HMAC-SHA-1).
+    \item PWD: Password.
+    \item Salt: Random value.
+    \item C: Number of iterations desired.
+    \item dkLen: Desired length of the derived key.
+\end{itemize}
+
+The Derived Key (DK) is constructed by concatenating components $T_1, T_2, \dots, T_{\lceil dkLen/hLen \rceil}$\footnote{$\lceil dkLen / hLen \rceil$  determines the number of components needed to reach or exceed the target key length.}, where each $|T_i| = hLen$.
+
+\subsubsection*{PBKDF2 Parameters and Applications}
+In WPA2 (Wi-Fi Protected Access 2), PBKDF2 is a core part of the 4-Way Handshake process. It is used to derive cryptographic keys securely from the Wi-Fi password to ensure encryption and integrity.
+\[
+    \text{(WPA2) DK = PBKDF2 (HMAC-SHA1, PSK, SSID, 4096, 256)}
+\]
+
+\section{Integrity, Authentication and Reliability Messages}
+The following codes are added to the message to ensure its integrity, authentication, and reliability, respectively:
+\begin{itemize}
+    \item MIC (Message Integrity Code): A hash of the message to ensure its integrity. \textcolor{Blue}{Integrity}
+    \item MAC (Message Authentication Code): A hash of the message and a secret key to ensure its authenticity. \textcolor{Blue}{Integrity and Authentication}
+    \item MID (Message IDentification): A unique identifier to ensure the message is not duplicated (avoid replay attacks). \textcolor{Blue}{Reliability}
+\end{itemize}
+\begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=Beware]
+    The hash must be encrypted; otherwise, a man-in-the-middle (MITM) attacker could modify both the hash and the message on-the-fly, bypassing integrity checks.
+\end{tcolorbox}
+
+\section{Keyed-Digest}
+\begin{center}
+    Authentication + Integrity
+\end{center}
+\textcolor{Red}{No confidentiality!! The key has not this purpose in this mechanism.}
+
+\hfill
+
+Send the data and the digest (hash) of the data encrypted with a secret key. The receiver decrypts the digest and compares it with the digest of the received data. So, we ensure the integrity and the authenticity of the message (and confidentiality if the message is encrypted).
+
+\hfill
+
+\begin{center}
+    \textbf{The Algorithm}
+\end{center}
+Send also a digest calculated not only on data but also on a shared secret key.
+\begin{verbatim}
+    Sender > Receiver : Message, Digest(Message, Key)
+
+    Receiver :
+        Digest(M, K) = DigestReceived ? OK : ALARM
+\end{verbatim}
+\textcolor{Blue}{Authentication is ensured by the key, and the integrity of the message is ensured by the digest.}
+
+Only who knows the key can compare the transmitted digest with the digest calculated on the received data.
+
+\hfill
+
+
+\begin{multicols}{2}
+    \raggedcolumns
+    Advantages:
+    \begin{itemize}
+        \item Only one operation (hash).
+        \item Few additional data (little overhead).
+        \item Authentication + Integrity.
+    \end{itemize}
+\columnbreak
+
+    
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{Images/Cryptography/keyed_digest.png}
+    \caption{Keyed-Digest process}
+\end{figure}
+\end{multicols}
+
+\subsection{Hash-based Message Authentication Code}
+\begin{center}
+    (HMAC) - RFC-2104 (also FIPS-198) - The only secure standard available.
+    \\ Key-based method used to verify both the integrity and authenticity of a message  M .
+\end{center}
+
+\[
+\text{HMAC}_K(M) = \text{H}\big((K' \oplus \text{opad}) \, \| \, \text{H}((K' \oplus \text{ipad}) \, \| \, M)\big)
+\]
+
+\begin{itemize}
+    \item H: Hash function (e.g. SHA-256).
+    \item M: Message.
+    \item K: The original secret key shared between two parties.
+    \begin{itemize}
+        \item $K' = H(K)$\quad if $|K| > B$.
+        \item $K' = K$\quad\ \ \quad if $|K| \le B$.
+    \end{itemize}
+    \item K': The block-sized key derived from  K.
+    \begin{itemize}
+        \item 0-padded up to $B$ bytes\quad if $|K'| < B$.
+    \end{itemize}
+    \item ipad: Inner padding (0x36 repeated B times).
+    \item opad: Outer padding (0x5C repeated B times).
+\end{itemize}
+
+
+\subsection{CBC-MAC}
+\begin{center}
+    (Cipher Block Chaining Message Authentication Code)
+    \\ Used for Integrity and Authentication.
+    \\ Only for didactic purposes, not for real applications.
+\end{center}
+\textcolor{Red}{No for confidentiality!! No encryption of data.}
+
+Main features:
+\begin{itemize}
+    \item Exploits a block-oriented symmetric encryption algorithm.
+    \item CBC mod with null IV.
+    \item Takes as MAC the last encrypted block.
+\end{itemize}
+
+\begin{center}
+    \textbf{The Algorithm}
+\end{center}
+The message $M$ is divided into $N$ blocks $M_1, M_2, \dots, M_N$.
+\begin{itemize}
+    \item $V_0 = IV = 0$.
+    \item $V_i = enc(V_{i-1} \oplus M_i, K)$ \quad \quad for ($i=1,2,\dots,N$).
+    \item The MAC (aka CBC-MAC) is the last block $V_N$.
+\end{itemize}
+
+\subsubsection*{CBC-MAC Insecurity}
+Reasons:
+\begin{itemize}
+    \item Secure only for fixed length messages (for other cases use CMAC or OMAC).
+\end{itemize}
+Possible attack against variable-length messages:
+    \begin{itemize}
+        \item If you have a CBC-MAC tag $t$ for a message $M$ and a tag $t'$ for another message $M'$, an attacker can construct a new message $M''$ such that the tag for $M''$ is valid without knowing the key $K$ (forgery attack).
+        
+\end{itemize}
+\begin{center}
+    Operational proof
+\end{center}
+    \begin{itemize}
+        \item If I create a new message $M''$ as follows:
+        \[
+            M'' = M \, || \, (M'_1 \oplus t) \, || \, M'_2 \, || \, \dots \, || \, M'_N
+        \]
+        \begin{itemize}
+            \item $M'_1 \oplus t$ modifies the first block of M' using the previous tag t to “cancel out” contributions.
+        \end{itemize} 
+        \[
+            t'' = \text{CBC-MAC}(M'', K) = t'
+        \]
+        \item The resulting CBC-MAC tag for $M''$ ends up being $t'$, the tag of $M'$, effectively forging the message without knowing the key.
+    \end{itemize}
+
+\section*{Performances of Cryptographic Algorithms}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{Images/Cryptography/velocity.png}
+    \caption{Hashing, Symmetric and Asymmetric Cryptography - Computational Effort}
+\end{figure}
+
+\section{Integrity and Secrecy of Data}
+\begin{center}
+    (Confidentiality and Integrity)
+\end{center}
+We obtain:
+\begin{itemize}
+    \item Secrecy from encryption with a key $K_1$.
+    \item Integrity from a MAC with a key $K_2$.
+\end{itemize}
+
+\hfill 
+
+\begin{center}
+    \textbf{Modalities}
+\end{center}
+
+    \begin{multicols}{2}
+
+        \subsection*{Authenticate and Encrypt}
+    \begin{center}
+        A\&E
+    \end{center}
+    \[
+        enc(K_1, M) \, || \, \text{MAC}(K_2, M)
+    \]
+    Key points:
+    \begin{itemize}
+        \item Integrity is checked before decryption.
+        \item May leak info about the plaintext.
+        \item Used by SSH.
+        \item You will know if the message is corrupted at the end of the decryption.
+        \item Insecure unless performed in a single step.
+    \end{itemize}
+\columnbreak
+
+    \subsection*{Authenticate then Encrypt}
+    \begin{center}
+        AtE
+    \end{center}
+    \[
+        enc(K_1, M \, || \, \text{MAC}(K_2, M))
+    \]
+    Key points:
+    \begin{itemize}
+        \item Integrity is checked before decryption.
+        \item No info leakage.
+        \item Used by SSL/TLS.
+        \item Secure only with CBC or stream encryption.
+    \end{itemize}
+\end{multicols}
+
+\begin{center}
+    \subsection*{Encrypt then Authenticate}
+    \begin{center}
+        EtA \\ Best solution.
+    \end{center}
+    \[
+        enc(K_1, M) \, || \, \text{MAC}(K_2, enc(K_1, M))
+    \]
+\end{center}
+
+Key points:
+\begin{itemize}
+    \item Can avoid decryption if MAC is wrong
+    \item Used by IPsec.
+    \item The most secure mode, but beware of implementation errors (e.g., always include the  IV  and algorithms in the MAC).
+\end{itemize}
+
+\begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=Beware]
+    Improper combination of secure algorithms may lead to an insecure result !
+\end{tcolorbox}
+A modern solution to that is Authenticated Encryption (AE) that combines encryption and authentication in a single operation.
+
+\subsection{Authenticated Encryption}
+\begin{center}
+    (AE)
+\end{center}
+A single operation for privacy and authentication/integrity.
+
+Key features:
+\begin{itemize}
+    \item Just one key and one algorithm.
+    \item Better speed.
+    \item Less error likelihood in combining the two functions.
+\end{itemize}
+
+\subsubsection{Infinite Garble Extension}
+\begin{center}
+    (IGE - for Authenticated Encryption)
+\end{center}
+A mode of operation for block ciphers that provides both confidentiality and authenticity.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/Cryptography/AE.png}
+    \caption{Infinite Garble Extension process}
+\end{figure}
+
+\subsection{Authenticated Encryption with Associated Data Schema}
+\begin{center}
+    (AEAD - Authenticated Encryption with Associated Data)
+\end{center}
+\begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=Beware]
+    AEAD is not a single algorithm but a cryptographic scheme that combines encryption and authentication. 
+\end{tcolorbox}
+Due to its Authenticated Encryption (AE) nature, it performs both encryption (confidentiality) and authentication (integrity and authenticity) in a single operation. AEAD ensures that any modification to the ciphertext or associated data is detectable.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\linewidth]{Images/Cryptography/aead.png}
+    \caption{AEAD scheme}
+\end{figure}
+
+\subsection{AE Standards}
+Many are issued by NIST and IETF:
+\begin{itemize}
+    \item GCM (Galois/Counter Mode).
+    \item CCM (CTR mode with CBC-MAC): off-line double-pass, the slowest one.
+    \item EAX (Encrypt-then-Authenticate-then-Encrypt with X translation = CTR + OMAC): on-line double-pass AEAD. Slow but small (uses just the encryption block) so very good for constrained systems.
+    \item OCB (Offset Codebook Mode): the fastest one, on-line single-pass AEAD. GPL patented so scarcely used, now free but for military uses.
+    \item AESKW (AES Key Wrap).
+    \item Encrypt-then-MAC (EtM).
+\end{itemize}
+\begin{tcolorbox}[colback=blue!10!white, colframe=blue!50!white]
+Double-pass is 2x slower than single-pass (in software).
+\end{tcolorbox}
+
+\subsubsection{Galois/Counter Mode as AEAD}
+\begin{center}
+    GCM as an example of AEAD. \\ Defined for encryption algorithms with 128-bit block size.
+\end{center}
+Is the most popular, on-line single-pass AEAD, parallelizable.
+\[
+    \text{(C, T)} = \text{GCM\_enc}(K, IV, A, P)
+\]
+\begin{itemize}
+    \item Outputs:
+    \begin{itemize}
+        \item $C$: Ciphertext, with same size as $P$.
+        \item $T$: Authentication Tag, with size $[1, ..., 2^{128}]$ bits.
+    \end{itemize}
+    \item $IV$: Initialization Vector, with size $[1, ..., 2^{64}]$ bits (96 bits is common).
+    \item $P$: Plaintext, with size $[1, ..., 2^{39}-256]$ bits.
+    \item $A$: Associated Data, not encrypted but authenticated, with size $[1, ..., 2^{64}]$ bits.
+    \item $K$: Key.
+\end{itemize}
+
+If the authentication is OK then it is possible to decrypt the message.
+\[
+    \text{P} = \text{GCM\_dec}(K, IV, A, C, T)
+\]
+\begin{tcolorbox}[colback=blue!10!white, colframe=blue!50!white, title=Output of decryption]
+    If the authentication is OK then the output is the plaintext, otherwise a special value FAIL is returned.
+\end{tcolorbox}
+Is present in openssl:
+\begin{itemize}
+    \item For encryption: ciphertext+authentication-tag generation.
+    \item For decryption: first computes the authentication tag and then decrypts the ciphertext if the tag is OK (matches the one in input).
+    \item Fast on Intel architecture using AES-NI for encryption and PCLMULQDQ for the tag.
+\end{itemize}
+
+\subsubsection{CTR mode with CBC-MAC as AEAD}
+\begin{center}
+    CCM as an example of AEAD. \\ Defined for encryption algorithms with 128-bit block size.
+\end{center}
+First an authentication tag of the plaintext and associated data is calculated using CBC-MAC. Then the plaintext and associated data are encrypted using CTR mode. Then the plaintext and the tag are (separately) encrypted using CTR mode.
+
+\subsubsection{AES Key Wrap}
+\begin{center}
+    AESKW - RFC-3394 \\ Only for keys, not data.
+\end{center}
+Assumptions:
+\begin{itemize}
+    \item The protocol encrypts/decrypts a key for storage/transmission.
+    \item The key is a multiple of 64 bits.
+    \item Generates also a 64-bit authentication tag.
+\end{itemize}
+
+\begin{center}
+    \textbf{The Operations}
+\end{center}
+\begin{enumerate}
+    \item KEK (Key Encryption Key) is the key used to encrypt/decrypt the key.
+    \item CEK (Content Encryption Key) is the key to be encrypted/decrypted.
+    \item {CEK} + tag = AESKW\_enc(KEK, CEK).
+    \item CEK (or FAIL) = AESKW\_dec(KEK, {CEK} + tag).
+\end{enumerate}
+This protocol, unlike normal AE algorithms, is simple (e.g. no RNG as in GCM needed, or no asymmetric encryption) and supports in-place encryption/decryption.
+
+\subsubsection{ASCON}
+\begin{center}
+    Used for encryption, AEAD, and hashing.
+\end{center}
+NOT to replace AES or SHA3, but to be used in constrained (lightweight) environments (e.g. IoT).
+\begin{center}
+    \textbf{For AEAD}
+\end{center}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lccccccc}
+        \toprule
+        \textbf{} & \textbf{key} & \textbf{nonce} & \textbf{tag} & \textbf{rate} & \textbf{capacity} & \textbf{pa} & \textbf{pb} \\
+        \midrule
+        ASCON-128  & 128 & 128 & 128 & 64  & 256 & 12 & 6 \\
+        ASCON-128a & 128 & 128 & 128 & 128 & 192 & 12 & 8 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{center}
+    \textbf{For Hashing}
+\end{center}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lcccccc}
+        \toprule
+        \textbf{} & \textbf{output} & \textbf{rate} & \textbf{capacity} & \textbf{pa} & \textbf{pb} \\
+        \midrule
+        ASCON-hash  & 256       & 64  & 256 & 12 & 12 \\
+        ASCON-xof   & arbitrary & 64  & 256 & 12 & 12 \\
+        ASCON-hasha & 256       & 64  & 256 & 12 & 8  \\
+        ASCON-xofa  & arbitrary & 64  & 256 & 12 & 8  \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+\begin{tcolorbox}[colback=blue!10!white, colframe=blue!50!white]
+pa and pb are the number of rounds for the permutation and the number of rounds for the key schedule, respectively. The higher the number of rounds, the higher the security but also the computational effort.
+\end{tcolorbox}
+
+\subsection{AE Applications}
+Here are listed some applications of AE:
+\begin{itemize}
+    \item TLS-1.3 (Transport Layer Security) uses GCM and CCM.
+    \item 802.11i (wi-fi) uses CCM.
+    \item ZigBee uses CCM* (a variant of CCM, = CCM + auth-only + enc-only).
+\end{itemize}
+
+\section{Authentication by Digest and Asymmetric Encryption}
+\begin{center}
+    (Real implementation of Digital Signatures)
+\end{center}
+The sender sends the message digest encrypted with the private key. The receiver decrypts the digest with the public key of the sender and compares it with the digest of the message. If they match, the message is authentic.
+\begin{verbatim}
+    Sender > Receiver : Message, Digest = enc(hash(Message), S.SecretKey)
+
+    Verifier :
+        hash(M) == DigestReceived(= dec(Digest, S.PublicKey)) ? OK : ALARM
+\end{verbatim}
+
+Those who know the public key can compare the transmitted digest with the digest calculated on the received data. It's the basis of digital signatures !! 
+
+\subsection{Digital Signature}
+\begin{center}
+    The technical basis for digital signatures.
+\end{center}
+\begin{center}
+    \textbf{The Algorithm}
+\end{center}
+The digital signature process involves creating a secure and verifiable way to ensure the authenticity, integrity, and non-repudiation of digital data. The process is as follows:
+\begin{enumerate}
+    \item The sender generates pair of cryptographic keys (PublicKey and SecretKey).
+    \item A cryptographic \textbf{hashing} algorithm is applied to the data (message or file).
+    \item The private key is used to \textbf{encrypt} this hash value, producing the digital signature.
+    \item The signed data (original data + digital signature) is sent to the receiver.
+    \item The receiver uses the sender’s public key to decrypt the signature.
+    \item The receiver applies the same hashing algorithm to the received message/data.
+    \item If the decrypted hash matches the hash computed locally, the digital signature is valid. This verifies:
+    \begin{itemize}
+        \item Authenticity: The message came from the expected sender.
+        \item Integrity: The data has not been altered.
+        \item Non-repudiation: The sender cannot deny having sent the message (due to the use of its own private key).
+    \end{itemize}
+\end{enumerate}
+\begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=Beware]
+In order to check the integrity of the message, the receiver must have the public key of the sender. The public key won't stay the same forever. It can be changed, so the verifier must have a way to know the new public key.
+\end{tcolorbox}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\linewidth]{Images/Cryptography/ds.png}
+    \caption{Digital Signature transmission}
+\end{figure}
+\begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=For the Exam]
+    The sender is sending the data + digital signature (encrypted hash of the message) to the receiver. 
+    
+    \vspace{0.2cm}
+    
+    Whether the manipulation happen in the data or in the digital signature, the receiver will detect it (and reject everything).
+\end{tcolorbox}
+
+
+\begin{center}
+    \textbf{Signature Verification for Stored Data}
+\end{center}
+
+The mechanism seen above is valid also for storing data. The data is stored with the digital signature. When the data is read, the digital signature is decrypted and compared with the hash of the data. If they match, the data is authentic.
+\begin{tcolorbox}[colback=blue!10!white, colframe=blue!50!white]
+Once the data are signed, even if they are store in a public place, the verifier can verify the integrity of the data.
+\end{tcolorbox}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\linewidth]{Images/Cryptography/ds_storing.png}
+    \caption{Digital Signature stored with the data}
+\end{figure}
+
+\subsubsection*{Digital Signature and Handwritten Signature}
+\begin{multicols}{2}
+
+    Digital signature: \\ Authentication + Integrity.
+    \begin{itemize}
+        \item Better because it is tightly linked to the data.
+        \item Each user does not have a digital signature but a private key, which can be used to generate an infinite number of digital signatures (one for each document).
+    \end{itemize}
+    \columnbreak
+
+    
+
+    Handwritten signature: \\ Only Authentication.
+    
+\end{multicols}
+
+\subsection{Authentication and Integrity Analysis}
+
+
+\begin{multicols}{2}
+
+    The use of a shared secret for providing Authentication and Integrity (MAC):
+    \begin{itemize}
+        \item Useful only for the receiver.
+        \item Cannot be used as a proof without disclosing the secret key.
+        \item Not useful for non repudiation.
+    \end{itemize}
+\columnbreak
+
+The use of asymmetric encryption for providing Authentication and Integrity (Digital Signature):
+\begin{itemize}
+    \item Applied only to the digest (because of the computational effort).
+    \item Can be used as a formal proof-of-origin.
+    \item Can be used for non repudiation.
+\end{itemize}
+\end{multicols}
+
+\section{Public Key Infrastructure}
+\begin{center}
+    (PKI)
+\end{center}
+A set of roles, policies, and procedures needed to create, manage, distribute, use, store, and revoke digital certificates and manage public-key encryption. The PKI provides a framework for managing digital certificates and public-key encryption.
+
+\subsection{Public Key Certificate}
+\begin{center}
+    Definition: \\ A data structure used to securely bind a public key to some attributes.
+\end{center}
+
+Typically it binds a key to an identity, but other associations are possible too (e.g. IP address, domain name, etc.). The certificate is signed by a trusted third party, the Certificate Authority (CA), to ensure the authenticity of the binding. The certificate has a limited lifetime, after which it must be renewed. Can be revoked on request both by the user and the issuer.
+
+\vspace{0.5cm}
+
+Formats for public key certificates:
+\begin{itemize}
+\item X.509:
+\begin{itemize}
+\item v1: Initial version.
+\item v2: Enhanced version introduced by ISO.
+\item v3: Most commonly used version, combining ISO and IETF standards.
+\end{itemize}
+\item Non X.509:
+\begin{itemize}
+\item PGP (Pretty Good Privacy).
+\item SPKI (Simple Public Key Infrastructure, IETF).
+\end{itemize}
+\item PKCS\#6 (Public Key Cryptography Standard \#6):
+\begin{itemize}
+\item RSA certificates, partially compatible with X.509.
+\item Now considered obsolete.
+\end{itemize}
+\end{itemize}
+
+\clearpage 
+\subsubsection{X.509 Certificate}
+\begin{center}
+    The most common format for public key certificates.
+\end{center}
+\begin{center}
+    \textbf{The Structure}
+\end{center}
+
+\begin{multicols}{2}
+
+    \begin{itemize}
+        \item Version: The version of the X.509 standard.
+        \item Serial Number: A unique number assigned by the CA.
+        \item Signature Algorithm: The algorithm used by the CA to sign the certificate.
+        \item Issuer: The entity that issued the certificate.
+        \item Validity: The period during which the certificate is valid.
+        \item Subject: The entity to which the certificate is issued. Written with its Distinguished Name (DN).
+        \item Subject Public Key Info: The public key of the subject.
+        \item CA Signature: The digital signature of the CA.
+    \end{itemize}
+
+\columnbreak
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{Images/Cryptography/x509.png}
+        \caption{X.509 Certificate structure}
+    \end{figure}
+\end{multicols}
+
+\subsection{Certificate Revocation}
+Any certificate can be revoked before its expiration date:
+\begin{itemize}
+\item At the request of the owner (subject).
+\item Unilaterally by the issuer (issuer).
+\end{itemize}
+When verifying a signature, the receiver must ensure that the certificate was valid at the time the signature was created. This \textbf{verification is the responsibility of the receiver}, also referred to as the “Relying Party” (RP).
+
+\subsubsection*{Revocation Mechanisms}
+\begin{itemize}
+    \item CRL (Certificate Revocation List):
+    A list of revoked certificates published and signed by the Certificate Authority (CA). It provides information about the validity of certificates since their issuance.
+    \item OCSP (Online Certificate Status Protocol);  
+A real-time protocol used to check the revocation status of a certificate. The response is signed by the OCSP responder (server), and the validity of the certificate is verified at the time of the request.  
+\end{itemize}
+
+\subsubsection*{X.509 CRL Structure}
+
+\begin{multicols}{2}
+
+    \begin{itemize}
+        \item Version: The version of the X.509 standard.
+        \item Signature Algorithm: The algorithm used by the CA to sign the CRL.
+        \item Issuer: The entity that issued the CRL.
+        \item This Update: The date of the last update.
+        \item User Certificate Revocation Date: The date of revocation.
+        \item CA digital signature.
+    \end{itemize}
+\columnbreak
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{Images/Cryptography/x509_crl.png}
+        \caption{X.509 CRL structure}
+    \end{figure}
+\end{multicols}
+
+\subsection{Verification of a Signature/Certificate}
+
+\begin{tcolorbox}[colback=blue!10!white, colframe=blue!50!white]
+    It is necessary to have an infrastructure for the certification and distribution of public-key certificates, as well as for the dissemination of their respective revocation information.
+\end{tcolorbox}
+
+\begin{center}
+    \textbf{The Process}
+\end{center}
+The verifies must:
+\begin{enumerate}
+    \item Decrypt the digital signature using the public key of the sender ($X$). The decrypted value represents the digest extracted from the signature.
+    \item Calculate the hash of the data (message or file) using the same hash function as the signer.
+    \item Compare the two digests: If they match, the signature is valid, confirming both the authenticity (the signature belongs to $X$) and the integrity (the data has not been altered).
+    \item If the digests do not match, the signature is invalid, indicating either tampering with the data or an incorrect public key.
+    \end{enumerate}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/Cryptography/cert_verif.png}
+    \caption{Verification process of a Signature/Certificate}
+\end{figure}
+
+\subsection{Certification Hierarchy}
+\begin{center}
+    (Chain of Trust)
+\end{center}
+The diagram \ref{fig:cert_hier} illustrates the Certification Hierarchy (also called the Chain of Trust) in a Public Key Infrastructure (PKI).
+
+\hfill
+
+Starting from the top:
+\begin{enumerate}
+    \item Top-Level Certification Authority (TLCA or Root CA): The highest level of the hierarchy, which issues certificates to intermediate CAs. It is the trusted entity that signs certificates for lower-level Certification Authorities (CAs). 
+    \[
+        \text{All trust starts here, and this CA is implicitly trusted in the PKI.}
+    \]
+    \item Intermediate Certification Authority (ICA): An entity that issues certificates to end entities (users, servers, etc.).
+    \item Lower-Level (Local) CAs.
+\end{enumerate}
+\begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=Beware]
+    Each CA at any level in the hierarchy signs certificates with its digital signature (ds). The signature is verified by the next higher-level CA in the hierarchy.
+\end{tcolorbox}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/Cryptography/cert_hier.png}
+    \caption{Example of Certification Hierarchy}
+    \label{fig:cert_hier}
+\end{figure}
+
+\section{Commercial National Security Algorithm Suite}
+\begin{center}
+    CNSA Suite 2018
+\end{center}
+Includes the following algorithms:
+\begin{itemize}
+    \item Symmetric Encryption: AES-256 (Advanced Encryption Standard 256), with mode CTL (low bandwidth) or GCM (high bandwidth).
+    \item Hashing: SHA-384 (Secure Hash Algorithm 512 truncated to 384 bits).
+    \item Key Agreement: ECDH-384 (Elliptic Curve Diffie-Hellman) and ECMQV (Elliptic Curve Menezes-Qu-Vanstone).
+    \item Digital Signature: ECDSA-384 (Elliptic Curve Digital Signature Algorithm).
+    \item Elliptic Curve (EC): Curve P-384.
+    \end{itemize}
+    
+    For legacy systems:
+    \begin{itemize}
+    \item Key Agreement: DH-3072 (Diffie-Hellman).
+    \item Key Exchange and Digital Signature: RSA-3072 (Rivest-Shamir-Adleman).
+    \end{itemize}
+    
+    \vspace{1cm}
+    
+    \begin{center}
+    CNSA Suite 2022
+    \end{center}
+    
+    Includes the following algorithms:
+    \begin{itemize}
+    \item Symmetric Encryption: AES-256 (Advanced Encryption Standard 256), with mode CTL (low bandwidth) or GCM (high bandwidth).
+    \item Hashing: SHA-384 or SHA-512.
+    \item Key Agreement: CRYSTALS-Kyber with level V parameters.
+    \item Digital Signature: CRYSTALS-Dilithium with level V parameters.
+    \item Digital Signature for Firmware and Software:
+    \begin{itemize}
+    \item All NIST SP 800-208 algorithms (LMS, XMSS).
+    \item Suggested: LMS SHA-256/192.
+    \end{itemize}
+    \end{itemize}

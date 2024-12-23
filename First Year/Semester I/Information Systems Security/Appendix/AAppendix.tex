@@ -1,4 +1,4 @@
-\chapter{Detailed Classes of Attacks and Vectors}
+\chapter{Detailed Informatic Attacks}
 
 In this appendix, we will analyze several types of attacks: IP Spoofing, Packet Sniffing, Connection Hijacking, and Distributed Denial of Service (DDoS).
 
@@ -124,10 +124,40 @@ During the MS-CHAPv2 authentication process, an attacker can intercept the chall
 
 The attacker then compares the computed response R with the R captured during the authentication exchange. If they match, the attacker has successfully guessed the password.
 
+\begin{center}
+    \subsection{Rainbow Table}
+    (Pre-computation approach)
+\end{center}
+
+A space-time trade-off technique to store (and lookup) an exhaustive hash table (less space, more time). 
+
+For example, using a password that is 12 digits long, the number of possible combinations is  $10^{12}$ . A rainbow table can store a subset of these combinations, significantly reducing the time needed to crack a password hash. For instance:
+\begin{itemize}
+    \item With a reduction factor of  $10^6$  (i.e.,  $10^{12} \div 10^6$ ), the number of stored combinations becomes $10^6$.
+    \item With a reduction factor of  $10^4$, the number of stored combinations becomes  $10^8$  (i.e.,  $10^{12} \div 10^4$ ).
+\end{itemize}
+\textbf{Reduction function} (deterministic function): \( R: \text{Hash} \rightarrow \text{Password} \), \textcolor{Red}{isn't the inverse of the hash function!} (Hashes are one-way functions). The reduction function  $R$  converts a hash value into a password candidate. When applied repeatedly with a hash function  h , it creates a hash-reduction chain.
+
+So, the reduction function is a generic algorithm used for pre-computation  (the results of offline-computations are stored in a structured form). 
+
+The pre-computation process:
+\begin{itemize}
+    \item Start with an initial password  $P_0$.
+    \item Apply the hash function $H$  to  $P_0$  to get the hash value  $H_0$.
+    \item Apply the reduction function  $R$  to  $H_0$  to get a new password  $P_1$.
+    \item Repeat this alternation  $n$  times:  $P_0 \rightarrow H_0 \rightarrow P_1 \rightarrow H_1 \rightarrow \dots$.
+    \item Instead of storing every intermediate hash-password pair (Storage is minimized), only the starting password of the chain (head) and the final password (tail) are stored in a database.
+    \item During an attack, chains are regenerated and compared to the target hash to find the original password efficiently.
+\end{itemize}
+
+
+{\LARGE{TO BE COMPLETED AND UNDERSTOOD}}
+
+
 \centering
 \section{Replay}
 \raggedright
-An attacker intercepts and retransmits a valid communication or authentication message between two parties in order to impersonate a legitimate user or gain unauthorized access to a system.
+an attacker intercepts valid communication or authentication messages and retransmits them later to gain unauthorized access, impersonate a user, or disrupt a system. This is possible because the attacker uses captured data without modifying it.
 
 \textbf{How a Replay Attack Works:}
 \begin{itemize}
@@ -349,59 +379,90 @@ Key features:
 \end{itemize}
 
 
-% --------
+\begin{center}
+    \section{Exhaustive Attack}
+    (Brute Force Attack)
+\end{center}
+
+An exhaustive attack, also known as a brute force attack, involves systematically trying all possible combinations of keys, passwords, or other credentials until the correct one is found. This type of attack relies on the computational power to exhaustively search through the entire key space or password list.
+
+\subsection*{Common uses of Exhaustive Attacks}
+Exhaustive attacks are commonly used to crack passwords, decrypt encrypted data, or bypass authentication mechanisms. They are particularly effective against weak passwords or encryption schemes with small key spaces.
+
+\subsection*{Mitigations for Exhaustive Attacks}
+To mitigate the risks associated with exhaustive attacks, it is essential to use strong, complex passwords and encryption keys. Implementing account lockout mechanisms after a certain number of failed login attempts can also help prevent brute force attacks. Additionally, using Multi-Factor Authentication (MFA) adds an extra layer of security, making it more difficult for attackers to gain unauthorized access.
 
 
+\begin{center}
+    \section{Factorization Attack}
+\end{center}
+Factorization attacks exploit the mathematical properties of certain cryptographic algorithms, particularly those based on the difficulty of factoring large composite numbers, such as RSA.
+
+\subsection*{Common uses of Factorization Attacks}
+Factorization attacks are primarily used to break cryptographic systems that rely on the hardness of factoring large numbers. By successfully factoring the modulus used in RSA encryption, an attacker can derive the private key from the public key, allowing them to decrypt messages, forge signatures, or impersonate the key owner.
+
+\subsection*{Mitigations for Factorization Attacks}
+To mitigate the risks associated with factorization attacks, it is essential to use sufficiently large key sizes. For RSA, key sizes of at least 2048 bits are recommended to ensure security against current factorization techniques. Additionally, using cryptographic algorithms that are not based on factorization, such as elliptic curve cryptography (ECC), can provide stronger security with smaller key sizes.
+
+\begin{center}
+    \section{Logarithmic Attacks}
+\end{center}
+Logarithmic attacks exploit the mathematical properties of certain cryptographic algorithms, particularly those based on the discrete logarithm problem, such as Diffie-Hellman key exchange or the Digital Signature Algorithm (DSA).
+
+\subsection*{Common uses of Logarithmic Attacks}
+Logarithmic attacks are primarily used to break cryptographic systems that rely on the hardness of the discrete logarithm problem. By solving the discrete logarithm problem, an attacker can derive private keys from public keys, allowing them to decrypt messages, forge signatures, or impersonate the key owner.
+
+\subsection*{Mitigations for Logarithmic Attacks}
+To mitigate the risks associated with logarithmic attacks, it is essential to use sufficiently large key sizes and secure parameter choices. For example, using larger prime numbers in Diffie-Hellman key exchange or elliptic curve cryptography (ECC) can provide stronger security. Additionally, using cryptographic algorithms that are resistant to logarithmic attacks, such as those based on lattice problems, can enhance security.
+
+\begin{center}
+    \section{Birthday Attack}
+\end{center}
+A birthday attack exploits the birthday paradox to find collisions in hash functions more efficiently than a brute-force search. The birthday paradox states that in a group of 23 people, there is a 50\% chance that two people share the same birthday, even though there are 365 possible birthdays.
+
+\subsection*{Mitigations for Birthday Attacks}
+To mitigate the risks associated with birthday attacks, it is essential to use cryptographic hash functions with a sufficiently large output size. For example, using hash functions with a 256-bit output size provides strong collision resistance against birthday attacks. Additionally, using salted hashes or keyed hashes can help prevent precomputed attacks by adding unique values to each hash computation.
+
+\begin{center}
+    \section{Fault Injection}
+\end{center}
+Fault injection attacks involve deliberately introducing faults or errors into a system to compromise its security or integrity. These attacks exploit vulnerabilities in hardware or software to manipulate the system's behavior and bypass security mechanisms.
 
 
+\section{Diffie-Hellman Man in the Middle}
+
+In a Diffie-Hellman Man-in-the-Middle (MitM) attack, an attacker intercepts the key exchange process between two parties (Alice and Bob) and establishes separate keys with each party. This allows the attacker to decrypt, modify, and re-encrypt messages between Alice and Bob without their knowledge.
+
+Here's how it works:
+\begin{enumerate}
+    \item \textbf{Interception}: The attacker intercepts the initial key exchange messages between Alice and Bob.
+    \item \textbf{Separate Key Exchanges}: The attacker sends their own public key to Alice and Bob, pretending to be the other party.
+    \item \textbf{Key Establishment}: Alice and Bob each establish a shared secret key with the attacker, believing they are communicating securely with each other.
+    \item \textbf{Message Relay}: The attacker decrypts messages from Alice, modifies them if desired, and re-encrypts them with the key shared with Bob, and vice versa.
+\end{enumerate}
+
+\textbf{Mitigations for Diffie-Hellman MitM Attacks}
+To mitigate the risks associated with Diffie-Hellman MitM attacks, it is essential to use authentication mechanisms to verify the identities of the communicating parties. This can be achieved through the use of digital certificates, public key infrastructure (PKI), or pre-shared keys. 
 
 
-
-
-
-
-
-\section{Attack Vectors}
-
-\begin{table}[H]
+\begin{figure}[H]
     \centering
-    \begin{tabular}{|p{3cm}|p{12cm}|}\hline
-    \rowcolor{blue!10}
-    \textbf{Vector} 
-        & \textbf{Description}  
-    \\ \hline
+    \includegraphics[width=0.8\linewidth]{Images/Cryptography/dh_mitm.png}
+    \caption{Diffie-Hellman man in the middle attack.}
+\end{figure}
 
-    Trojan
-        & Appears as legitimate software or a harmless file to deceive users into installing it. Contains a dangerous payload and is often used to create a Man At The End or a Man In The Browser.
-    \\ \hline
-    
-    Virus
-        & Attaches itself to legitimate files or programs and spreads by infecting other files on a system. Is propagated by humans (often involuntarily).
-    \\ \hline
-
-    Worm
-        & Self-replicating malware that spreads across networks without requiring user intervention. Unlike a virus, a worm does not need to attach itself to a file or program.
-    \\ \hline
-
-    Backdoor
-        & Unauthorized access point, it allows an attacker to remotely control the system or retrieve sensitive information without the knowledge of the legitimate users or administrators.
-    \\ \hline
-
-    Rootkit
-        & Designed to gain unauthorized access to a system and maintain privileged control (root access) while hiding its presence from users and security software.
-    \\ \hline
-
-    Potentially Unwanted Applications (PUAs)
-        & Software programs that are not inherently malicious but may negatively impact a user’s system or experience. They often include programs like adware, toolbars, or system optimizers that may be bundled with other software. While PUAs typically don’t cause direct harm like viruses or malware, they can degrade system performance, display excessive ads, or compromise privacy by collecting personal data without clear consent. 
-    \\ \hline
-
-    Ransomware 
-        & Encrypts a user’s files or locks them out of their system, rendering the data inaccessible. The attacker then demands a ransom.
-    \\ \hline
+\begin{center}
+    \section{Filtering Attacks}
+\end{center}
+Type of cyberattack where an attacker attempts to bypass security mechanisms, such as firewalls, intrusion detection systems (IDS), or content filters, by manipulating network traffic or data patterns. These attacks aim to evade detection or allow unauthorized access by exploiting the filtering rules.
 
 
 
-\end{tabular}
-\caption{Attack Vectors}
-\label{tab:attackVectors}
-\end{table}
+{\center{\section{Forgery Attacks}}}
+Forgery attacks involve creating or altering data to impersonate a legitimate user, device, or system. These attacks aim to deceive users, bypass security mechanisms, or gain unauthorized access to sensitive information.
+
+Use case: CBC-MAC Forgery Attack (Cryptography chapter).
+
+
+{\center{\section{Chosen Cipher-text Attack}}}
+A chosen ciphertext attack is a type of cryptographic attack where an attacker can choose ciphertexts to be decrypted by a target system and observe the corresponding plaintexts. By analyzing the system's responses (e.g., signals such as errors) to chosen ciphertexts, the attacker can gain information about the encryption algorithm, the key, or the plaintexts themselves.

@@ -24,10 +24,10 @@
     \end{figure}
 \end{multicols}
 
-\section{Authentication via PPP}
+\section{Point to Point Protocol}
 \raggedright
     \begin{center}
-        (Point to Point Protocol)
+        (PPP)
     \end{center}
 The Point-to-Point Protocol (PPP) is a data link layer protocol (Layer 2 in the OSI model) used for establishing direct connections between two network nodes. PPP is able to encapsulate network packets and carry them over a point-to-point link.
 
@@ -35,22 +35,22 @@ There are several types of links: \textbf{Physical} (legacy types, e.g., Public 
 
 A point-to-point link is activated in three sequential steps:
 \begin{itemize}
-    \item \textbf{Link Establishment}: The devices at both ends of the link establish a connection, usually through signaling or negotiation protocols, such as PPP (Point-to-Point Protocol).
+    \item \textbf{Link Establishment}: The devices at both ends of the link establish a connection, usually through signaling or negotiation protocols (LCP - Link Control Protocol), such as PPP (Point-to-Point Protocol).
     \item \textbf{Authentication}: If necessary (\textcolor{red}{Optional!!}), authentication takes place to verify the identity of the connecting devices, often using protocols like Password Authentication Protocol (PAP), Challenge Handshake Protocol (CHAP) or Extensible Authentication Protocol(EAP).
     \item \textbf{Network Layer Configuration}: Once the link is established and authenticated, L3 encapsulation is performed via various Network Control Protocols (NCPs), such as IP Control Protocol (IPCP) for IP packets, enabling data transfer to begin.
 \end{itemize}
 
 \section{Authentication for Network Access}
-All the following protocols are applied to the initial connection to the network.
+All the following protocols are used for authentication in network access scenarios, where a user or device must verify its identity before being granted access to a network or its resources. Using PPP as a reference, these protocols are employed during the authentication phase of a PPP connection.
 \begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=Be aware]
     The following protocols are not exclusively used only for PPP.
 \end{tcolorbox}
 
-\subsection{LCP Authentication Protocol}
+\subsection{Link Control Protocol Authentication Protocol}
 \begin{center}
-    (Link Control Protocol Authentication Protocol)
+    (LCP Authentication Protocol)
 \end{center}
-LCP is responsible for negotiating various options, including those related to authentication. The LCP Authentication Protocol allows two devices at either end of the PPP link to agree on which authentication protocol to use (if any) for the connection. his option is part of the LCP negotiation phase. \newline 
+LCP is responsible for \textbf{negotiating} various options, including those related to authentication. The LCP Authentication Protocol allows two devices at either end of the PPP link to agree on which authentication protocol to use (if any) for the connection. his option is part of the LCP negotiation phase. \newline 
 
 \textbf{Structure of the configuration option:}
 \begin{itemize}
@@ -60,9 +60,9 @@ LCP is responsible for negotiating various options, including those related to a
     \item Algorithm (8 bits): Algorithm identifier (\textcolor{red}{Optional!!}). Used when the protocol supports multiple algorithms, like in CHAP where different hashing algorithms
 \end{itemize}
 
-\subsection{PAP}
+\subsection{Password Authentication Protocol}
 \begin{center}
-    (Password Authentication Protocol - RFC 1334 - Obsolete)
+    (PAP - RFC 1334 - Obsolete)
 \end{center}
 The key features are: 
 \begin{itemize}
@@ -71,7 +71,7 @@ The key features are:
     \item The Request/Response may be lost, so the Authenticator must allow multiple requests (the identifier field is needed for this purpose).
 \end{itemize}
 
-\subsubsection{2-Way Handshake}
+\subsubsection*{2-Way Handshake}
 
 \begin{tcolorbox}[colback=yellow!10!white, colframe=yellow!70!black, title=Peer \textrightarrow Authenticator] 
     
@@ -103,9 +103,9 @@ The key features are:
 \end{tcolorbox}
 
 
-\subsection{CHAP}
+\subsection{Challenge Handshake Authentication Protocol}
 \begin{center}
-    (Challenge Handshake Protocol - Obsolete)
+    (CHAP - Obsolete)
 \end{center}
 
 The key features are: 
@@ -118,7 +118,7 @@ The key features are:
     \item Challenge or Response may be lost, so authenticator \underline{must} resend Challenge if no Response.
 \end{itemize}
 
-\subsubsection{3-Way Handshake}
+\subsubsection*{3-Way Handshake}
 
 
 \begin{tcolorbox}[colback=yellow!10!white, colframe=yellow!70!black, title=Authenticator \textrightarrow Peer] 
@@ -165,9 +165,9 @@ The key features are:
     \end{itemize}
 \end{tcolorbox}
 
-\subsection{MS-CHAP}
+\subsection{Microsoft Challenge Handshake Protocol}
 \begin{center}
-    (Microsoft Challenge Handshake Protocol)
+    (MS-CHAP - Obsolete)
 \end{center}
 
 MS-CHAP is a variant of CHAP designed by Microsoft, with two versions: MS-CHAP v1 and MS-CHAP v2. While these protocols share similar principles, they are \underline{distinct} and different from each other.
@@ -270,9 +270,9 @@ Key features in common (v1 and v2):
     
 \end{tcolorbox}
 
-\subsection{EAP}
+\subsection{Extensible Authentication Protocol}
 \begin{center}
-    (Extensible Authentication Protocol. \newline Most adopted, but it's a \textcolor{red}{framework}).
+    (EAP - Most adopted, but it's a \textcolor{red}{framework}).
 \end{center}
 
 Key features:
@@ -292,7 +292,7 @@ Key features:
     \item EAP methods must provide security on their own (\textcolor{red}{the link is not assumed to be physically secure}).
 \end{itemize}
 
-\subsubsection{EAP Encapsulation}
+\subsubsection*{EAP Encapsulation}
 
 Authentication data are transported via a specific EAP encapsulation protocol (L3 packets are not yet available).
 
@@ -309,7 +309,7 @@ Encapsulation features:
     \item No fragmentation (\textcolor{red}{must be provided by EAP methods for a payload greater than the minimum EAP Maximum Transfer Unit (MTU)})
 \end{itemize}
 
-\subsubsection{EAP methods}
+\subsubsection*{EAP methods}
 
 \begin{itemize}
     \item EAP-TLS (TLS mutual authentication).
@@ -321,10 +321,11 @@ Encapsulation features:
     \item AKA-SIM: Authentication and Key Agreement - Subscriber Identity Module. It is an authentication protocol used in mobile networks, specifically in 3G, 4G, and 5G systems.
 \end{itemize}
 
-\subsubsection{EAP Architecture}
+\subsubsection*{EAP Architecture}
 
 \begin{figure}[H]
-    \includegraphics[width=\linewidth]{Images/NetSec/eapArchitecture.png}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/NetSec/eapArchitecture.png}
     \caption{Architecture of EAP}
 \end{figure}
 
@@ -338,26 +339,28 @@ PPP \textrightarrow Point-to-Point Protocol
 802.11 \textrightarrow Wi-Fi
 \end{tcolorbox}
 
-\section{Authentication for Complex Network Access}
+\section{Centralized Authentication for Network Access}
 This diagram \ref{fig:network_authentication} illustrates the process of authenticating users for network access, involving multiple components to manage and verify permissions. 
 
 Analyzing the main components:
 \begin{itemize}
     \item Network Access Server (NAS): This component serves as the entry point for devices attempting to connect to the network. The NAS collects credentials from users and initiates the authentication process.
     \item Protocol Manager: Acting as an intermediary, the protocol manager handles communication between the NAS and the Authentication Server.
-    \item Authentication Server: The server verifies user credentials and determines if the user is valid. It checks against a database (indicated as users configuration), which contains information about each user’s permissions, restrictions, and allowed configurations.
-    \item Delegation Process: For each request, the NAS queries the Authentication Server to verify if the user is valid, typically using an authentication protocol such as RADIUS.
+    \item Authentication Server: The server verifies user credentials and determines if the user is valid. It checks against a database (indicated as users configuration), which contains information about each user’s permissions, restrictions, \boxed{and} allowed configurations (DHCP is no longer needed, also the connection speed is given!).
 \end{itemize}
+Delegation Process: For each request, the NAS queries the Authentication Server to verify if the user is valid, typically using an authentication protocol such as RADIUS.
 \begin{figure}[H]
     \includegraphics[width=\linewidth]{Images/NetSec/netsecConclusion.png}
     \caption{Authentication Mechanism for Complex Network Access}
     \label{fig:network_authentication}
 \end{figure}
-
-\section{AAA}
+\begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=Beware]
+In a large network, there are many NAS devices, each connected to a different network segment. So, the Authentication mechanism must be handled by a centralized server\dots
+\end{tcolorbox}
+\subsection{AuthN - AuthZ - AuthC Server}
 \begin{center}
     (Crucial components of network security and access control.) \newline
-    AuthN - AuthZ - AuthC
+    AAA Server strategy.
 \end{center}
 
 Network Access Server (NAS) manufacturers claim that security needs three functions:
@@ -366,23 +369,34 @@ Network Access Server (NAS) manufacturers claim that security needs three functi
     \item Authorization: Determining what an authenticated user or device is allowed to do within the network or system.
     \item Accounting: Tracking and logging the activities of users or devices on the network for auditing, monitoring, and reporting purposes.
 \end{itemize}
+The Authentication Server (AS) performs exactly these three functions, communicating with one or more Network Access Servers (NAS) via one or more protocols. 
 
-\section{Network Authentication Protocols}
+Some of these protocols are:
+\begin{itemize}
+    \item RADIUS: Remote Authentication Dial-In User Service, explained in the next section.
+    \item DIAMETER: An evolution of RADIUS, designed to address its limitations and provide enhanced functionality (Especially regarding the security aspect.). Emphasis on roaming among different ISPs (proxy).
+    \item TACACS+: Technically better than Radius, but less used because of its proprietary nature (Cisco).
+\end{itemize}
+
+\section{Centralized Network Authentication Protocols}
 Mechanisms designed to verify the identity of users, devices, or systems before granting access to a network or its resources. These protocols ensure secure communication and prevent unauthorized access.
 
-\subsection{RADIUS}
+\subsection{Remote Authentication Dial-In User Service}
 \begin{center}
-    (Remote Authentication Dial-In User Service - de facto standard)
+    (RADIUS - de facto standard)
 \end{center}
 Network protocol used for centralized authentication, authorization, and accounting (AAA) management for users who connect and use a network service. It is commonly employed in environments like VPNs, Wi-Fi networks, dial-up connections, and other network services that require secure user access control.
 
 Key features:
 \begin{itemize}
-    \item Centralized Authentication, Authorization, and Accounting (AAA) functionality, which can lead to issues such as a single point of failure if redundancy is not implemented.    
+    \item Centralized Authentication, Authorization, and Accounting (AAA) functionality, which can lead to issues such as a single point of failure if redundancy is not implemented.  
+    \item The de facto standard for centralized network access control.
+    \item Can also interconnect many authentication servers, acting as a \textbf{proxy server}.  
     \item Widely used for remote access, VPNs, and enterprise Wi-Fi networks.
     \item Is used for communication between a NAS and a backend Authentication Server (AS).
     \item Relatively low security compared to modern protocols:
     \begin{itemize}
+        \item Passwords obfuscation (not encryption).
         \item Passwords may be transmitted using less secure methods (e.g., PAP).
         \item Only the payload is encrypted, not the entire packet.
     \end{itemize}
@@ -407,22 +421,18 @@ The address of NAS1 is \textcolor{red}{not an email address}; it is an identifie
     \label{fig:RADIUS_proxy}
 \end{figure}
 
-\subsubsection{Security Functionalities}
+\subsubsection*{RADIUS Security Functionalities}
 \begin{itemize}
     \item Sniffing NAS request: The lack of full encryption in the RADIUS protocol can lead to the exposure of sensitive data, including passwords and user information (\textcolor{Blue}{Confidentiality, Privacy}).
     \item Fake AS Response (to block valid or allow invalid users): An attacker could spoof a fake Authentication Server (AS) response to either deny access to valid users or grant access to unauthorized users.
     \item Changing AS Response (Y > N or N > Y): An attacker might manipulate a legitimate AS response, altering the authentication result (e.g., changing a “No” to a “Yes” or vice versa) (\textcolor{Blue}{AuthN and Integrity of AS response}).
-    \item Replay of AS Response (if not properly tied to NAS Request): If the response is not tied to a unique request, an attacker could replay an old response to gain unauthorized access (\textcolor{Blue}{Anti-Replay of AS response}).
+    \item Replay of AS Response (if not properly tied to NAS Request): If the response is not tied to a unique request (The ID is the Authenticator), an attacker could replay an old response to gain unauthorized access (\textcolor{Blue}{Anti-Replay of AS response}).
     \item Password Enumeration (from Fake NAS): An attacker could enumerate passwords by sending requests with different credentials and analyzing the response time or error messages from a fake NAS. (\textcolor{Blue}{AuthN of NAS request}).
     \item DoS (Denial of Service) via Many NAS Requests from Fake NAS: A fake or compromised NAS could flood the AS with numerous requests, potentially overwhelming the server and causing a DoS. (\textcolor{Blue}{Server scalability}).
+    No real confidentiality of the data in the RADIUS request, as the (user) password is masked using an XOR operation.
 \end{itemize}
 
-\begin{itemize}
-    \item Confidentiality of the data in the RADIUS request by masking the (user) password (with an XOR operation).
-    \item Protection form replay of RADIUS response, by binding the response to a specific request via a Request Authenticator.
-\end{itemize}
-
-\subsubsection{Data Protection}
+\subsubsection*{RADIUS Data Protection}
 RADIUS uses MD5 hashing with a shared secret (KEY) (keyed-digest) to ensure both the integrity and authenticity of the communication between the Network Access Server (NAS) and the Authentication Server (AS). The shared secret is a pre-configured key that only the NAS and the AS know, and it is used to protect RADIUS messages.
 
 \hfill
@@ -444,7 +454,7 @@ The user’s password is not transmitted in plain text, but rather, it is “enc
     \end{itemize}
 \end{itemize}
 
-\subsubsection{Packet Types}
+\subsubsection{RADIUS Packet Types}
 There are different messages exchanged between the Network Access Server (NAS) and the RADIUS server.
 
 \begin{itemize}
@@ -474,7 +484,7 @@ There are different messages exchanged between the Network Access Server (NAS) a
     
 \end{figure}
 
-\subsubsection{Authenticator}
+\subsubsection*{RADIUS Authenticator Parameter}
 In RADIUS, the Authenticator serves a crucial role in ensuring both the authentication of the server’s reply and the \underline{prevention of replay attacks}. It also helps in masking sensitive information like passwords.
 
 \hfill
@@ -491,7 +501,7 @@ The authenticator parameter:
     \end{itemize}
 \end{itemize}
 
-\subsubsection{Attributes}
+\subsubsection{RADIUS Attributes}
 Type parameters:
 \begin{itemize}
     \item 1 for User-Name (text). \texttt{value} includes a Network Access Identifier (NAI - e.g. value= "alice" or "alice@domain.com") or a Distinguished Name\footnote{Is typically composed of several relative distinguished names (RDNs), which represent different attributes of the object, and they are arranged in a hierarchy, starting from the most specific to the most general. e.g. DN = CN=John Doe, OU=Users, DC=example, DC=com} (DN).
@@ -509,9 +519,9 @@ Type parameters:
     \end{equation*}
 \end{itemize}
 
-\subsubsection{NAI}
+\subsection{Network Access Identifier}
 \begin{center}
-    (Network Access Identifier - RFC-2486 - \textcolor{blue}{max 72-byte value})
+    (NAI - RFC-2486 - \textcolor{blue}{max 72-byte value})
 \end{center}
 The formula:
 \begin{equation*}
@@ -523,8 +533,8 @@ The formula:
 \begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=Be aware] 
 The username is the one used in the PPP authentication phase, does not necessarily match the application username.
 \end{tcolorbox}
-
-\subsection{CHAP + RADIUS - example}
+When a user attempts to connect to a Wi-Fi network or VPN, they might submit their credentials in the form username@domain.com (which differs from their email username).
+\subsection{CHAP and RADIUS - example}
 The figure \ref{fig:chap_plus_radius} illustrates the interaction between CLIENT, NAS and RADIUS for authenticating users in a network access scenario. This combined approach is used to securely authenticate users and ensure the integrity of their credentials.
 
 \hfill
@@ -573,7 +583,7 @@ Other key points:
     \item The first implementations included Windows XP.
 \end{itemize}
 
-\subsubsection{Architecture}
+\subsubsection*{IEEE 802.1x Architecture}
 The architecture of IEEE 802.1X (in figure \ref{fig:8021x_architecture}) is based on a port-based access control mechanism and consists of three primary components that interact to provide network authentication. Here’s an overview of these components:
 \begin{itemize}
     \item Supplicant (Client Device): The device (e.g., a laptop, smartphone, or any client device) that requests access to the network.
@@ -587,14 +597,14 @@ The architecture of IEEE 802.1X (in figure \ref{fig:8021x_architecture}) is base
     \label{fig:8021x_architecture}
 \end{figure}
 
-\subsubsection{Messages}
+\subsubsection*{IEEE 802.1x Messages}
 The diagram \ref{fig:8021.x_messages} illustrates the IEEE 802.1X authentication process using a switch as an authenticator and a RADIUS server as the authentication server.
 On the left side, we have EAPOL (Extensible Authentication Protocol over LAN) messages, and on the right side, we have RADIUS messages.
 
 \begin{center}
     \textbf{\underline{The Process}}
 \end{center}
-Initial Connection (Access Blocked): Laptop connects to the network port via a switch. The port initially blocks access until the authentication is completed.
+As depicted in the figure \ref{fig:8021.x_messages}, the 802.1X authentication process involves several steps, starting from the Initial Connection (Access Blocked): a laptop connects to the network port via a switch. The port initially blocks access until the authentication is completed.
 
 \hfill 
 
@@ -678,10 +688,15 @@ It focuses on securing the transmission of data between endpoints (\textcolor{Bl
 Many solutions are listed below (like VPNs or IPsec).
 
 \begin{center}
-    \subsection{VPN}
+    \subsection{Virtual Private Networks}
+\end{center}
+\begin{center}
+    (VPNs)
 \end{center}
 
 \textbf{Definition and Utility}:
+
+\vspace{0.2cm}
 
 VPNs are techniques (hardware or software) used to create a private network over shared or untrusted channels and transmission devices, ensuring secure communication between remote endpoints.
 
@@ -695,6 +710,8 @@ The figure \ref{fig:vpn_definition} illustrates how a telecommunication company 
 \end{figure}
 
 \textbf{Techniques to Create a VPN}
+
+\vspace{0.2cm}
 
 We must provide \underline{mutual} security for both actors.
 \begin{itemize}
@@ -710,7 +727,7 @@ Then we can analyze some techniques of VPN:
 \end{itemize}
 \hfill
 \begin{center}
-    \subsubsection{VPN via private addresses}
+    \subsubsection{VPN via Private Addresses}
 \end{center}
 Use of private IP address\footnote{Private IANA networks RFC-1918.} spaces to create a secure network tunnel between endpoints while keeping the actual IP addresses of the users or internal networks \underline{hidden or separated} from the public internet.
 
@@ -727,7 +744,7 @@ This protection can be easily defeated if somebody:
 \end{itemize}
 
 \begin{center}
-    \subsubsection{VPN via protected routing}
+    \subsubsection{VPN via Protected Routing}
 \end{center}
 
 The routers encapsulate whole L3 packets as a payload inside another packet (e.g. IP in IP, IP over MPLS). The routers perform access control to the VPN by ACL (Access Control List) \textrightarrow \ \textcolor{red}{(Security only for the network provider)}.
@@ -739,7 +756,7 @@ This protection can be easily defeated by anybody that manages a router or can s
     \caption{VPN via IP tunnel example.}    
 \end{figure}
 
-\subsubsection{VPN via cryptographic protection of the network packets}
+\subsubsection{VPN via Cryptographic Protection of the Network Packets}
 
 \begin{center}
     (bidirectional protection)
@@ -769,7 +786,7 @@ Before encapsulation (as seen above), the packets are protected with:
 \begin{center}
     \section{IPsec}
 \end{center}
-The standard for IETF architecture for L3 security in IPv4/IPv6. Let create S-VPN (Secure Virtual Private Networks) over untrusted networks or to create end-to-end secure packet flows. It provides encryption, authentication, and integrity for data transmitted across public or insecure networks, like the internet.
+IPSec (Internet Protocol Security) is a suite of protocols used to secure IP communications. Let create S-VPN (Secure Virtual Private Networks) over untrusted networks or to create end-to-end secure packet flows. It provides encryption, authentication, and integrity for data transmitted across public or insecure networks, like the internet.
 
 \hfill
 
@@ -797,14 +814,14 @@ The protocol for key exchange is IKE (Internet Key Exchange), which is \textcolo
     \item Peer Authentication when creating the SA (Security Association): Key agreement after authN (pre-shared key or digital signature).
 \end{itemize}
 
-\subsection{SA}
+\subsection{IPsec Security Association}
 \begin{center}
-    (IPsec Security Association)
+    (IPsec SA)
 \end{center}
-A unidirectional logical connection exists between two IPsec systems. Each Security Association (SA) is associated with different security services. Two SAs are needed to provide complete protection for a bidirectional packet flow.
+A unidirectional logical connection exists between two IPsec systems. Each Security Association (SA) is associated with different security services. At least two SAs are needed to provide complete protection for a bidirectional packet flow.
 
 \begin{tcolorbox}[colback=lightblue] 
-    Protection can be made in different ways, with each Security Association (SA) being associated with specific security services. For example, one SA might provide **encryption** for confidentiality, while another might provide **authentication** for data integrity and sender verification. 
+    Protection can be made in different ways, with each Security Association (SA) being associated with specific security services. For example, one SA might provide encryption for confidentiality, while another might provide authentication for data integrity and sender verification. 
 \end{tcolorbox}
 
 
@@ -813,9 +830,9 @@ A unidirectional logical connection exists between two IPsec systems. Each Secur
     \caption{IPsec Security Association example.}
 \end{figure}
 
-\subsection{Local Database}
+\subsection{IPsec Local Database}
 
-The **IPsec Local Database** is a crucial component in managing IPsec policies and associations. It consists of two main parts:
+The IPsec Local Database is a crucial component in managing IPsec policies and associations. It consists of two main parts:
 
 \begin{itemize}
     \item Security Policy Database (SPD)
@@ -833,7 +850,7 @@ The **IPsec Local Database** is a crucial component in managing IPsec policies a
     \end{itemize}
 \end{itemize}
 
-\subsection{Packet Sending}
+\subsection{IPsec Packet Sending}
 
 As shown in Figure \ref{fig:IPsec_packet_sending}, the process of sending a packet using IPsec involves several steps to ensure the data is securely transmitted. These steps include:
 
@@ -854,32 +871,35 @@ As shown in Figure \ref{fig:IPsec_packet_sending}, the process of sending a pack
 \end{enumerate}
 
 \begin{figure}[H]
-    \includegraphics[width=\linewidth]{Images/NetSec/ipsect_sending.png}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/NetSec/ipsect_sending.png}
     \caption{How IPsec works (sending).}
     \label{fig:IPsec_packet_sending}
 \end{figure}
 
-\subsection{Transport mode}
+\subsection*{IPsec Transport mode}
 Used for end-to-end security, typically applied by hosts rather than gateways. An exception occurs when the gateway itself requires protection for its own traffic, such as in cases of SNMP or ICMP communication.
 
 Transport Mode in IPsec is computationally light because only encrypt and/or authenticate the payload of the original IP packet, leaving the IP header intact. This reduces processing overhead compared to encrypting the entire packet, as seen in Tunnel Mode. However, a key limitation is that the variable fields in the original IP header, such as the Time-to-Live (TTL) or checksum, remain exposed. This lack of protection can potentially be exploited, as attackers may analyze or manipulate these fields to gather information about the network or disrupt communication.
 
 \begin{figure}[H]
-    \includegraphics[width=\linewidth]{Images/NetSec/ipsec_transport_mode.png}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/NetSec/ipsec_transport_mode.png}
     \caption{IPsec transport mode.}
 \end{figure}
 
-\subsection{Tunnel Mode}
+\subsection*{IPsec Tunnel Mode}
 Used to create a VPN (usually by gateway)
 
 In Tunnel Mode, the entire original IP packet, including \textbf{both the header and payload}, is encapsulated within a new IP packet. This provides \textbf{comprehensive protection} for the original packet, as encryption and authentication are applied to the encapsulated content. Since the entire original IP packet (including the header) is encapsulated, all variable fields of the inner header are fully protected, ensuring confidentiality and integrity (\textbf{Protection of End-to-End (E2E) Header Fields}).
 
 \begin{figure}[H]
-    \includegraphics[width=\linewidth]{Images/NetSec/ipsec_tunnel_mode.png}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/NetSec/ipsec_tunnel_mode.png}
     \caption{IPsec tunnel mode.}
 \end{figure}
 
-\subsection{AH}
+\subsection{IPsec AH}
 \begin{center}
     (Authentication Header - second version RFC-2402)
 \end{center}
@@ -891,7 +911,7 @@ In Tunnel Mode, the entire original IP packet, including \textbf{both the header
         \item Data integrity and sender authentication for IP packets, ensuring that the data has not been tampered with and confirming the identity of the sender.
         \item Security for non-variable fields of the IP header, such as the source IP address, destination IP address, and protocol field (which indicates the next-level protocol).
     \end{itemize}
-    \item Does not provide:
+    \item \underline{Does not} provide:
     \begin{itemize}
         \item Confidentiality (encryption).
         \item Protection for variable fields of the IP header, such as Time-to-Live (TTL).
@@ -940,7 +960,8 @@ In Tunnel Mode, the entire original IP packet, including \textbf{both the header
 \hfill
 
 \begin{figure}[H]
-    \includegraphics[width=\linewidth]{Images/NetSec/AH_format.png}
+    \centering
+    \includegraphics[width=0.7\linewidth]{Images/NetSec/AH_format.png}
     \caption{Authentication Header (AH) format.}
 \end{figure}
 
@@ -948,7 +969,7 @@ In Tunnel Mode, the entire original IP packet, including \textbf{both the header
 The Security Parameters Index (SPI) is the entry for the Security Association Database (SAD). In the figure rows are 32 bits long.
 \end{tcolorbox}
 
-\subsection{Packet Receiving}
+\subsection{IPsec Packet Receiving}
 
 When an IPsec packet is received (as figure \ref{fig:ipsec_packet_rec} depicts), the following sequence of steps takes place:
 
@@ -991,20 +1012,18 @@ When an IPsec packet is received (as figure \ref{fig:ipsec_packet_rec} depicts),
 \end{tcolorbox}
 
 \begin{figure}[H]
-  \includegraphics[width=\linewidth]{Images/NetSec/packet_receiving.png}
+    \centering
+  \includegraphics[width=0.7\linewidth]{Images/NetSec/packet_receiving.png}
   \caption{IPsec packet receiving.}
   \label{fig:ipsec_packet_rec}
 \end{figure}
 
 
-\subsection{ESP}
+\subsection{IPsec ESP}
 \begin{center}
     (Encapsulating Security Payload)
 \end{center}
-\textbf{Main Points}:
-\begin{itemize}
-    \item Base mechanism: \textbf{DES-CBC} (RFC-1829), but other mechanisms are also possible.
-\end{itemize}
+Base mechanism: \textbf{DES-CBC} (RFC-1829), but other mechanisms are also possible.
 
 \hfill
 
@@ -1031,7 +1050,8 @@ Provides confidentiality and also offers \textbf{authentication}, but only for t
 \end{tcolorbox}
 
 \begin{figure}[H]
-  \includegraphics[width=\linewidth]{Images/NetSec/esp_transport_mode.png}
+    \centering
+  \includegraphics[width=0.5\linewidth]{Images/NetSec/esp_transport_mode.png}
   \caption{ESP in transport mode.}
 \end{figure}
 
@@ -1048,11 +1068,12 @@ Provides confidentiality and also offers \textbf{authentication}, but only for t
 \end{tcolorbox}
 
 \begin{figure}[H]
-    \includegraphics[width=\linewidth]{Images/NetSec/esp_tunnel_mode.png}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/NetSec/esp_tunnel_mode.png}
     \caption{ESP in tunnel mode.}
 \end{figure}
 
-\subsection{IPsec Implementation Details}
+\subsection*{IPsec Implementation Details}
 Key features:
 \begin{itemize}
     \item \textbf{UI crypto-suites} (RFC-4308) for interoperability
@@ -1096,7 +1117,8 @@ Main points:
 \end{itemize}
 
 \begin{figure}[H]
-  \includegraphics[width=\linewidth]{Images/NetSec/ipsec_replay_protection.png}
+    \centering
+  \includegraphics[width=0.7\linewidth]{Images/NetSec/ipsec_replay_protection.png}
   \caption{IPsec moving window or replay protection.}
 \end{figure}
 
@@ -1116,7 +1138,7 @@ Key features:
     \item Clarifications about \textbf{SA} (Security Association) and \textbf{SPI} (Security Parameter Index) for faster lookup.
 \end{itemize}
 
-\subsubsection{Algorithms}
+\subsubsection*{Algorithms}
 \begin{center}
     (RFC-4305)
 \end{center}
@@ -1152,9 +1174,9 @@ Key features:
 
 \end{itemize}
 
-\subsubsection{TFC}
+\subsubsection*{Traffic Flow Confidentiality}
 \begin{center}
-    (Traffic Flow Confidentiality)
+    (TFC)
 \end{center}
 Is a concept in IPsec designed to obscure traffic patterns in a network, making it difficult for attackers or eavesdroppers to infer information based on the size or timing of network traffic.
 
@@ -1183,7 +1205,7 @@ Key features:
 
 \subsection{IPsec Implementations}
 
-\subsubsection{End-to-End Security}
+\subsubsection{IPsec for End-to-End Security}
 
 The diagram \ref{fig:EESec} illustrates the use of IPsec in transport mode to establish a secure virtual channel between two individual hosts over a wider network (WAN).
 
@@ -1203,12 +1225,13 @@ Use case:
     \item Suitable for scenarios where both ends directly support IPsec and can manage encryption and decryption.
 \end{itemize}
 \begin{figure}[H]
-  \includegraphics[width=\linewidth]{Images/NetSec/end_to_end_security.png}
+    \centering
+  \includegraphics[width=0.5\linewidth]{Images/NetSec/end_to_end_security.png}
   \caption{End-to-End security implementation.}
   \label{fig:EESec}
 \end{figure}
 
-\subsubsection{Basic VPN}
+\subsubsection{IPsec for Basic VPN}
 The diagram \ref{fig:basicVPN} illustrates the use of IPsec in tunnel mode to establish a secure virtual channel between two networks over a wider network (WAN).
 
 Main points:
@@ -1227,12 +1250,13 @@ Use case:
 \end{itemize}
 
 \begin{figure}[H]
-  \includegraphics[width=\linewidth]{Images/NetSec/basic_vpn.png}
+    \centering
+  \includegraphics[width=0.5\linewidth]{Images/NetSec/basic_vpn.png}
   \caption{Basic VPN implementation.}
   \label{fig:basicVPN}
 \end{figure}
 
-\subsubsection{End-to-End Security with Basic VPN}
+\subsubsection{IPsec for End-to-End Security with Basic VPN}
 The diagram \ref{fig:end_vpn} illustrates the combined use of IPsec in tunnel mode and IPsec in transport mode to provide end-to-end security across a WAN while maintaining confidentiality for external traffic and optional authentication for internal traffic.
 
 Main points:
@@ -1249,12 +1273,13 @@ Use case:
 \end{itemize}
 
 \begin{figure}[H]
-    \includegraphics[width=\linewidth]{Images/NetSec/end_vpn.png}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/NetSec/end_vpn.png}
     \caption{End-to-End Security with basic VPN implementation.}
     \label{fig:end_vpn}
 \end{figure}
 
-\subsubsection{Secure Gateway}
+\subsubsection{IPsec for Secure Gateway}
 \begin{center}
     (gateway-based security)
 \end{center}
@@ -1267,12 +1292,13 @@ Main points:
 \end{itemize}
 
 \begin{figure}[H]
-  \includegraphics[width=\linewidth]{Images/NetSec/secure_gateway.png}
+    \centering
+  \includegraphics[width=0.5\linewidth]{Images/NetSec/secure_gateway.png}
   \caption{Secure gateway implementation.}
   \label{fig:secgat}
 \end{figure}
 
-\subsubsection{Secure Remote Access}
+\subsubsection{IPsec for Secure Remote Access}
 \begin{center}
     (gateway-based security with end-to-end security)
 \end{center}
@@ -1288,12 +1314,13 @@ Key features:
 
 
 \begin{figure}[H]
-  \includegraphics[width=\linewidth]{Images/NetSec/gatsec_end.png}
+    \centering
+  \includegraphics[width=0.5\linewidth]{Images/NetSec/gatsec_end.png}
   \caption{Gateway-based security with end-to-end security.}
   \label{fig:gat_end}
 \end{figure}
 
-\subsubsection{Anonymous Navigation}
+\subsubsection{IPsec for Anonymous Navigation}
 The figure \ref{fig:anonnav} illustrates a scenario of anonymous navigation using a VPN (Virtual Private Network) setup.
 \begin{center}
     (usually called "VPN")
@@ -1319,7 +1346,8 @@ The figure \ref{fig:anonnav} illustrates a scenario of anonymous navigation usin
 \end{itemize}
 
 \begin{figure}[H]
-  \includegraphics[width=\linewidth]{Images/NetSec/anonnav.png}
+    \centering
+  \includegraphics[width=0.5\linewidth]{Images/NetSec/anonnav.png}
   \caption{Anonymous navigation.}
   \label{fig:anonnav}
 \end{figure}
@@ -1330,12 +1358,12 @@ The key management is a very important component of IPsec. Provides to the IPsec
 Key distribution:
 \begin{itemize}
     \item OOB (Out-Of-Band, e.g. manual, installing pre-shared key).
-    \item Automatic in-band (e.g. IKE).
+    \item Automatic in-band (e.g. IKE): The keys are exchanged during the negotiation of the IPsec SAs.
 \end{itemize}
 
-\subsubsection{ISAKMP}
+\subsubsection{Internet Security Association and Key Management Protocol}
 \begin{center}
-    (Internet Security Association and Key Management Protocol - RFC-2408)
+    (ISAKMP - RFC-2408)
 \end{center}
 
 Key features:
@@ -1350,9 +1378,9 @@ Key features:
     \item Reuse of ISAKMP SA: The same ISAKMP SA can be reused for negotiating\footnote{SA Negotiation: Handles the negotiation of SA parameters required for IPsec traffic, such as encryption algorithms and key lifetimes.} multiple IPsec SAs, optimizing performance.
 \end{itemize}
 
-\subsubsection{IKE}
+\subsubsection{Internet Key Exchange}
 \begin{center}
-    (Internet Key Exchange - RFC-2409 IKEv1 - RFC-7296 IKEv2)
+    (IKE - RFC-2409 IKEv1 - RFC-7296 IKEv2)
 \end{center}
 \[
 ISAKMP + OAKLEY
@@ -1383,7 +1411,8 @@ Purpose of Phase 2:
 \end{center}
 
 \begin{figure}[H]
-  \includegraphics[width=\linewidth]{Images/NetSec/ike_operations.png}
+    \centering
+  \includegraphics[width=0.5\linewidth]{Images/NetSec/ike_operations.png}
   \caption{IKE operations.}
 \end{figure}
 
@@ -1478,7 +1507,7 @@ ICMP is used for global purposes, so IPsec cannot be implemented with it (since 
     \item No built-in security: \textbf{DNSSEC} (DNS Security Extensions) is under development/deployment to provide security features.
 \end{itemize}
 
-\subsection{DNS Architecture}
+\subsection*{DNS Architecture}
 \begin{center}
     (Architecture of Iterative Query)
 \end{center}
@@ -1495,11 +1524,12 @@ In an \textit{iterative query} in the context of DNS (Domain Name System), the c
 In summary, in iterative querying, the DNS resolver follows the chain of referrals to find the requested information. Each server in the chain only provides the best answer it can (either the requested data or a referral to another server), and the client handles further queries until the answer is found.
 
 \begin{figure}[H]
-  \includegraphics[width=\linewidth]{Images/NetSec/dns_architecture.png}
+    \centering
+  \includegraphics[width=0.6\linewidth]{Images/NetSec/dns_architecture.png}
   \caption{DNS architecture for iterative query.}
 \end{figure}
 
-\subsection{DNS Shadow Server}
+\subsection*{DNS Shadow Server}
 A DNS shadow server is a type of DNS server used for security, monitoring or malicious purposes. It is designed to closely mimic an authoritative DNS server but operates in the background without directly interacting with client queries.
 
 \hfill
@@ -1513,7 +1543,8 @@ A DNS shadow server is a type of DNS server used for security, monitoring or mal
 
 If the attack occurs between nameservers, it can lead to a Distributed Denial of Service (DDoS) attack.
 \begin{figure}[H]
-  \includegraphics[width=\linewidth]{Images/NetSec/dns_shadow_server.png}
+    \centering
+  \includegraphics[width=0.6\linewidth]{Images/NetSec/dns_shadow_server.png}
   \caption{DNS shadow server usages.}
 \end{figure}
 
