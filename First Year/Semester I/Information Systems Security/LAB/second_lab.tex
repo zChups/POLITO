@@ -14,8 +14,8 @@
         \texttt{openssl enc} 
 			& Allows the encryption and decryption of data with several symmetric cipher
         routines. 
-			& -help; -ciphers; -p
-				\newline -<algorithm>; -nopadK;
+			& -help, -ciphers, -p(rint);
+				\newline -<algorithm>; -nopad;
 				\newline -K <hexKey>; -iv <hexVector>
 				\newline -in <inputFile>; -out <outputFile>
 				\newline -iter <n>; -pbkdf2; -nosalt
@@ -156,6 +156,15 @@
 	\item Command: \texttt{scp <fileName> <user>@<ipReciever>:/home/<user>/Desktop}
 	\item \textcolor{Blue}{\texttt{scp}: in my case user=Alice or Bob, with their ip provided from \texttt{ifconfig}, password=0000}
 \end{itemize}
+
+\subsection*{Symmetric Encryption}
+\begin{lstlisting}[style=bashStyle]
+	#encrypt ptext using aes 128bit-key with cbc mode
+	openssl enc -in ptext -e -out ctext.aes128 -aes-128-cbc -nosalt
+		#the symmetric is derived from a password, with no password:
+	openssl enc -in ptext -out ctext.aes128 -aes-128-cbc -nosalt -K 00112233445566778899aabbccddeeff -iv 00112233445566778899aabbccddeeff -p
+	
+\end{lstlisting}
 
 \subsection*{Operations with Digests}
 

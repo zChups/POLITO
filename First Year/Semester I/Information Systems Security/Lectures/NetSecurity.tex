@@ -350,7 +350,8 @@ Analyzing the main components:
 \end{itemize}
 Delegation Process: For each request, the NAS queries the Authentication Server to verify if the user is valid, typically using an authentication protocol such as RADIUS.
 \begin{figure}[H]
-    \includegraphics[width=\linewidth]{Images/NetSec/netsecConclusion.png}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/NetSec/netsecConclusion.png}
     \caption{Authentication Mechanism for Complex Network Access}
     \label{fig:network_authentication}
 \end{figure}
@@ -416,7 +417,8 @@ The figure \ref{fig:RADIUS_proxy} depicts the RADIUS server forwarding each requ
 
 The address of NAS1 is \textcolor{red}{not an email address}; it is an identifier in the form: \texttt{user@auth\_domain}.
 \begin{figure}[H]
-    \includegraphics[width=\linewidth]{Images/NetSec/radiusProxy.png}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/NetSec/radiusProxy.png}
     \caption{RADIUS acting as a proxy server.}
     \label{fig:RADIUS_proxy}
 \end{figure}
@@ -479,7 +481,8 @@ There are different messages exchanged between the Network Access Server (NAS) a
 \end{itemize}
 
 \begin{figure}[H]
-    \includegraphics[width=\linewidth]{Images/NetSec/radius_packet_format.png}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/NetSec/radius_packet_format.png}
     \caption{RADIUS packet format.}
     
 \end{figure}
@@ -548,7 +551,8 @@ The figure \ref{fig:chap_plus_radius} illustrates the interaction between CLIENT
     \end{itemize}
 
 \begin{figure}[H]
-    \includegraphics[width=\linewidth]{Images/NetSec/chap_plus_radius.png}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/NetSec/chap_plus_radius.png}
     \caption{Example of CHAP + RADIUS.}
     \label{fig:chap_plus_radius}
 \end{figure}
@@ -592,7 +596,8 @@ The architecture of IEEE 802.1X (in figure \ref{fig:8021x_architecture}) is base
 \end{itemize}
 
 \begin{figure}[H]
-    \includegraphics[width=\linewidth]{Images/NetSec/8021x_architecture.png}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/NetSec/8021x_architecture.png}
     \caption{802.1x Architecture.}
     \label{fig:8021x_architecture}
 \end{figure}
@@ -627,7 +632,8 @@ As depicted in the figure \ref{fig:8021.x_messages}, the 802.1X authentication p
 \textbf{Final Connection:}
 EAP-Success: If authentication is successful, the switch sends an EAP-Success message to the client, and network access is granted.
 \begin{figure}[H]
-    \includegraphics[width=\linewidth]{Images/NetSec/8021x_messages.png}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/NetSec/8021x_messages.png}
     \caption{802.1x Messages.}
     \label{fig:8021.x_messages}
 \end{figure}
@@ -703,7 +709,8 @@ VPNs are techniques (hardware or software) used to create a private network over
 The figure \ref{fig:vpn_definition} illustrates how a telecommunication company carries your private traffic separately from other private networks.
 
 \begin{figure}[H]
-    \includegraphics[width=350pt]{Images/NetSec/vpn_definition.png}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/NetSec/vpn_definition.png}
     \caption{VPN Example}
     \label{fig:vpn_definition}
     
@@ -752,7 +759,8 @@ The routers encapsulate whole L3 packets as a payload inside another packet (e.g
 This protection can be easily defeated by anybody that manages a router or can sniff the packets during transmission.
 
 \begin{figure}[H]
-    \includegraphics[width=\linewidth]{Images/NetSec/vpn_via_ip_tunnel.png}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/NetSec/vpn_via_ip_tunnel.png}
     \caption{VPN via IP tunnel example.}    
 \end{figure}
 
@@ -774,7 +782,8 @@ Before encapsulation (as seen above), the packets are protected with:
 \end{tcolorbox}
 
 \begin{figure}[H]
-    \includegraphics[width=\linewidth]{Images/NetSec/vpn_via_encrypt_tunnel.png}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/NetSec/vpn_via_encrypt_tunnel.png}
     \caption{VPN via secure IP tunnel example.}    
 \end{figure}
 
@@ -826,7 +835,8 @@ A unidirectional logical connection exists between two IPsec systems. Each Secur
 
 
 \begin{figure}[H]
-    \includegraphics[width=\linewidth]{Images/NetSec/SA.png}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/NetSec/SA.png}
     \caption{IPsec Security Association example.}
 \end{figure}
 

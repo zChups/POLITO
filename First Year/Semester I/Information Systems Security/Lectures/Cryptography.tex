@@ -14,7 +14,11 @@ The message in its original, unencrypted form is called plaintext (or cleartext)
     Only one key, shared between the sender and the receiver, is used for both encryption and decryption. 
 \end{center}
 
-\textbf{Encrypt Equation}
+
+
+\begin{multicols}{2}
+
+    \textbf{Encrypt Equation}
 \begin{equation*}
     \begin{aligned}
         C &= \text{enc}(K, P) \\
@@ -31,16 +35,22 @@ The message in its original, unencrypted form is called plaintext (or cleartext)
           &= \text{enc}^{-1}(K, C)
     \end{aligned}
 \end{equation*}
-\begin{figure}[H]
-    \includegraphics[width=\linewidth]{Images/Cryptography/symmCrypto.png}
-    \caption{Example of symmetric encryption}
-\end{figure}
+    \columnbreak
+    
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{Images/Cryptography/symmCrypto.png}
+        \caption{Example of symmetric encryption}
+    \end{figure}
+\end{multicols}
+
 
 \subsection{Symmetric Block Encryption Algorithms}
 Block encryption refers to ciphers that process fixed-size blocks of data (e.g., 128 bits) at a time.
 
 \begin{figure}[H]
-    \includegraphics[width=\linewidth]{Images/Cryptography/blockSymm.png}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/Cryptography/blockSymm.png}
     \caption{Famous Symmetric Block Encryption Algorithms}
 \end{figure}
 
@@ -201,7 +211,8 @@ Key features:
 
 Padding modes are used in block cipher encryption schemes to handle plaintext that is not an exact multiple of the block size. Since block ciphers operate on fixed-size blocks, any plaintext that does not fit into the required block size needs to be padded.
 \begin{figure}[H]
-    \includegraphics[width=\linewidth]{Images/Cryptography/padding.png}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/Cryptography/padding.png}
     \caption{Padding Mode}
     
 \end{figure}
@@ -306,7 +317,7 @@ Main features:
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\linewidth]{Images/Cryptography/Stream_Cipher.png}
+    \includegraphics[width=0.5\linewidth]{Images/Cryptography/Stream_Cipher.png}
     \caption{Stream (real) algorithm process.}
 \end{figure}
 
@@ -354,7 +365,7 @@ If:
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\linewidth]{Images/Cryptography/crypto_key_lens.png}
+    \includegraphics[width=0.5\linewidth]{Images/Cryptography/crypto_key_lens.png}
     \caption{Key length of cryptographic algorithms}
 \end{figure}
 
@@ -422,7 +433,7 @@ This ensures that only Bob can decrypt the message, as only he has the correspon
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\linewidth]{Images/Cryptography/asymmCrypto.png}
+    \includegraphics[width=0.5\linewidth]{Images/Cryptography/asymmCrypto.png}
     \caption{Example of asymmetric encryption}
 \end{figure}
 
@@ -445,7 +456,7 @@ Key features:
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\linewidth]{Images/Cryptography/basic_digital_signature.png}
+    \includegraphics[width=0.5\linewidth]{Images/Cryptography/basic_digital_signature.png}
     \caption{Basic idea of digital Signature}
 \end{figure}
 
@@ -786,7 +797,7 @@ Usually hash functions calculated digests through the following steps:
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\linewidth]{Images/Cryptography/hash_f.png}
+    \includegraphics[width=0.5\linewidth]{Images/Cryptography/hash_f.png}
     \caption{Hash function process}
 \end{figure}
 
@@ -802,7 +813,7 @@ For example, the SHA-1 function has 512-bit blocks and uses the following paddin
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\linewidth]{Images/Cryptography/crypto_hash_functions.png}
+    \includegraphics[width=0.5\linewidth]{Images/Cryptography/crypto_hash_functions.png}
     \caption{Cryptographic hash functions}
 \end{figure}
 

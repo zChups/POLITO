@@ -17,7 +17,7 @@
 \cite{01_introduction}
 Complexity is an enemy of security, in fact, consequence of a succsseful attack are as follows:
 \begin{itemize}
-    \item Financial loss: Successful cyberattacks can result in significant financial damages, whether through direct theft, fraud, or the cost of mitigating the attack. These costs may include legal fees, regulatory fines, and compensation for affected parties, further impacting the financial stability of the organization.
+    \item \textbf{Financial loss}: Successful cyberattacks can result in significant financial damages, whether through direct theft, fraud, or the cost of mitigating the attack. These costs may include legal fees, regulatory fines, and compensation for affected parties, further impacting the financial stability of the organization.
     \item \textbf{Recovery Cost}: After a cyberattack, the cost of recovering data, restoring systems, and rebuilding infrastructure can be astronomical. This includes expenses for forensic investigations, IT support, and additional security measures to prevent future incidents. Recovery can take weeks, months, or even longer, depending on the extent of the damage.
 
 \item \textbf{Productivity Loss}: Cyberattacks often lead to downtime as systems are taken offline for repairs, investigation, or containment. Employees may be unable to access necessary resources, leading to decreased efficiency, missed deadlines, and slower response times. The longer the recovery process, the greater the impact on business operations.
@@ -27,24 +27,31 @@ Complexity is an enemy of security, in fact, consequence of a succsseful attack 
 \item \textbf{Reputation Damage}: The fallout from a cyberattack can severely damage an organization's reputation, leading to a loss of customer trust. Once confidential data is compromised or service outages occur, customers may feel their information is not secure, causing them to take their business elsewhere. In some cases, the reputational damage can take years to repair, even if the security breach is fully addressed.
 \end{itemize}
 
-\begin{figure}[H]
-    \includegraphics[width=\linewidth]{Images/Introduction/riskEvaluation.png}
-    \caption{The risk estimation process}
-\end{figure}
+\clearpage
 
-Terminolgy:
-\begin{itemize}
-    \item Asset: the set of goods, data and people needed for an IT service.
-    \item Vulnerability: intrinsic weakness of an asset.
-    \item Threat: possible deliberate action/accidental event that can produce the loss of a security property by exploiting a vulnerability.
-    \item Attack: threat occurrence (deliberate action)
-    \item (Negative) event: threat occurrence (accidental event)
-\end{itemize}
+\begin{multicols}{2}
+    Terminolgy:
+    \begin{itemize}
+        \item Asset: the set of goods, data and people needed for an IT service.
+        \item Vulnerability: intrinsic weakness of an asset.
+        \item Threat: possible deliberate action/accidental event that can produce the loss of a security property by exploiting a vulnerability.
+        \item Attack: threat occurrence (deliberate action)
+        \item (Negative) event: threat occurrence (accidental event)
+    \end{itemize}
+    \columnbreak
+    
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{Images/Introduction/riskEvaluation.png}
+        \caption{The risk estimation process}
+    \end{figure}
+\end{multicols}
 
 Managing threats requires us to \textbf{prioritize risks}, considering not only the impact but also the available \textbf{time and budget}\footnote{A risk assessment matrix (or risk heat map) can be useful in this process}.
 
 \begin{figure}[H]
-    \includegraphics[width=\linewidth]{Images/Introduction/analysisAndManagement.png}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/Introduction/analysisAndManagement.png}
     \caption{Analysis and management of security}
 \end{figure}
 
@@ -82,6 +89,7 @@ The NIST Cybersecurity Framework is a set of guidelines developed by the Nationa
 \end{itemize}
 
 \begin{figure}[H]
-    \includegraphics[width=\linewidth]{Images/Introduction/nistFramework.png}
+    \centering
+    \includegraphics[width=0.5\linewidth]{Images/Introduction/nistFramework.png}
     \caption{NIST cybersecurity framework}
 \end{figure}
