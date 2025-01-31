@@ -99,13 +99,13 @@ Applications are not only for humans, but also for devices, services, etc.
     \item Applicant: an entity that wants to obtain a credential (e.g., A new employee at a company).
     \item Credential Service Provider (CSP) (e.g., POLITO), which, for applicants, is responsible for:
     \begin{itemize}
-        \item Identity Proofing: Verifying the applicant’s claimed identity.
-        \item Authenticator Enrollment: Issuing an authenticator (e.g., a password, hardware token, or biometric tool) that binds the applicant’s identity to the credential.
-        \item Storing attributes of the applicant’s identity.
+        \item Identity Proofing: Verifying the applicant's claimed identity.
+        \item Authenticator Enrollment: Issuing an authenticator (e.g., a password, hardware token, or biometric tool) that binds the applicant's identity to the credential.
+        \item Storing attributes of the applicant's identity.
     \end{itemize}
-    \item Claimant: An entity that asserts a claim of identity during an authentication process (e.g., a subscribed employee who asserts their identity in order to gain access).
+    \item Claimant: An entity that asserts a claim of identity during an authentication process (e.g., a subscribed employee who asserts its identity in order to gain access).
     \item Subscriber: An entity whose identity has been verified by a Credential Service Provider (CSP) and who has been issued an authenticator (e.g., the new employee after successful verification and issuance of an authenticator, or the subscribed employee after logging in).
-    \item Verifier: An entity that verifies the claimant’s identity by executing the authentication protocol using the claimant’s issued credentials.
+    \item Verifier: An entity that verifies the claimant's identity by executing the authentication protocol using the claimant's issued credentials.
 \end{itemize}
 
 \hfill
@@ -119,16 +119,16 @@ The model has two entries: applicant and claimant. Below are the steps for each 
 \begin{enumerate}
     \item The process begins with the applicant, an individual seeking to establish a digital identity. The applicant interacts with a Credential Service Provider (CSP) to obtain or prove credentials.
 \begin{itemize}
-\item The CSP shares the applicant’s identity attributes with the Verifier to check their correctness and availability.
-\item The CSP-Verifier communication continues, to ensure that the authenticator (e.g., a password, cryptographic key, or biometric) is correctly bound to the new subscriber’s identity.
+\item The CSP shares the applicant's identity attributes with the Verifier to check their correctness and availability.
+\item The CSP-Verifier communication continues, to ensure that the authenticator (e.g., a password, cryptographic key, or biometric) is correctly bound to the new subscriber's identity.
 \item Upon successful verification and issuance of credentials, the applicant becomes a subscriber.
 \end{itemize}
     \item The claimant presents proof of identity to a verifier.
         \begin{itemize}
         \item This process involves an authentication protocol, a secure method for presenting and validating the authenticator.
-        \item The claimant’s goal is to prove possession and control of the authenticator to the verifier.
+        \item The claimant's goal is to prove possession and control of the authenticator to the verifier.
         \end{itemize}
-    \item Once the verifier confirms the claimant’s identity, it sends an authentication assertion to the Relying Party. The authentication assertion acts as a secure confirmation that the claimant has been successfully authenticated.
+    \item Once the verifier confirms the claimant's identity, it sends an authentication assertion to the Relying Party. The authentication assertion acts as a secure confirmation that the claimant has been successfully authenticated.
     \item The Relying Party (RP) receives the authentication assertion and uses it to make an access decision.
     \begin{itemize}
         \item If the assertion is valid, the RP grants the subscriber access to an authenticated session.
@@ -142,15 +142,16 @@ The model has two entries: applicant and claimant. Below are the steps for each 
 \end{figure}
 
 \begin{tcolorbox}[colback=blue!10!white, colframe=blue!50!white]
-Credential binds an authenticator to the subscriber's identity (e.g., X.509 certificate).
+Credentials bind an authenticator to the subscriber's identity (e.g., the Public-key certificate binds the public key with specific attributes of the owner).
 \end{tcolorbox}
 
+\clearpage
 \section{Generic Authentication Protocol}
 \begin{enumerate}
     \item The verifier sends an authentication request to the user (claimant).
     \item The user sends his ID to the verifier.
     \item The verifier checks the ID against the stored credential data. Then, it sends a proof request (“Is this really you?”) to the user.
-    \item The user sends an authentication response by submitting the appropriate authenticator $f(S_{UID})$\footnote{f may be a hash function.} (e.g., password, OTP, fingerprint) (Better if the channel is secure).
+    \item The user sends an authentication response by submitting the appropriate authenticator $f(S_{UID})$(e.g., password, OTP, fingerprint) (Better if the channel is secure).
     \item The verifier checks the submitted response against the stored credential data (Mapped as UID:f($S_{UID}$)).
 \end{enumerate}
 
@@ -162,22 +163,28 @@ Credential binds an authenticator to the subscriber's identity (e.g., X.509 cert
 
 \subsection{Password-based Authentication}
 The user's secret is the password. 
+\begin{multicols}{2}
+\raggedcolumns
 
-The verifier may have stored the password:
-\begin{itemize}
-    \item In cleartext.
-    \item One-way hashed.
-\end{itemize}
+    The verifier may have stored the password:
+    \begin{itemize}
+        \item In cleartext.
+        \item One-way hashed.
+    \end{itemize}
+\columnbreak
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{Images/Authentication/pb_authn.png}
+    \caption{Password-based Authentication}
+\end{figure}
+\end{multicols}
 In order to verify the proof given by the user, the verifier must either check if the password is the same as the one stored or hash the password and compare the digest with the stored hash.
 
 \begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=Beware]
 Even if the password is hashed, it is still vulnerable. For example, the attacker can use a dictionary attack or a brute-force attack.
 \end{tcolorbox}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.5\linewidth]{Images/Authentication/pb_authn.png}
-    \caption{Password-based Authentication}
-\end{figure}
+
 
 
 
@@ -222,7 +229,7 @@ Even if the password is hashed, it is still vulnerable. For example, the attacke
 
     Client-side password storage:
     \begin{itemize}
-        \item Should be only in the user's end ... but too many passwords.
+        \item Should be only in the user's hand ... but too many passwords.
         \item Use an encrypted file or a password wallet/manager.
     \end{itemize}
 \end{multicols}
@@ -235,13 +242,13 @@ For Dictionary Attack and Rainbow Table, the attacker can use a precomputed tabl
 \begin{center}
     The only correct way to store passwords.\\ \textcolor{Blue}{Does not admit dictionary attacks or those based on rainbow tables(pre-computation attacks).}
 \end{center}
-How it works, for each user ID (UID):
+How it works, for each user ID (UID) the Verifier:
 \begin{itemize}
-    \item Create/ask the password.
-    \item Generate a salt (different for each UID): A random (unpredictable) and long enough string, which should contain rarely used or control characters.
-    \item Compute the Salted Hash of Password \(SHP = H(Salt || Password)\).
+    \item Creates/asks the password.
+    \item Generates a salt (different for each UID): A random (unpredictable) and long enough string, which should contain rarely used or control characters.
+    \item Computes the Salted Hash of Password \(SHP = H(Salt || Password)\).
     \[\text{The salt is concatenated with the password.} \]
-    \item Store (server/client-side) the triples \((\text{UID, Salt, SHP})\).
+    \item Stores the tuple \((\text{UID, Salt, SHP})\).
 \end{itemize}
 Additional benefit: we have different SHP for users having the same password !
 
@@ -256,7 +263,7 @@ Additional benefit: we have different SHP for users having the same password !
     Verifier:
         1. Checks if the UID is in the DB.
             1a. If not, abort: "AuthN Failure".
-            1b. If yes, retrieves Salt and SHP.
+            1b. If yes, retrieves Salt from the DB.
         2. Computes SHP' = H(Salt || pwd).
         3. Compares SHP' with SHP.
             3a. If not equal, "AuthN Failure".
@@ -357,22 +364,17 @@ Strong authentication as:
 \vspace{0.3cm}
 
 
-In conclusion, an authentication (authN) technique can be regarded as strong or weak depending on the \textbf{attack model}. For example, users of Internet banking services would probably prefer the ECB definition, while employees of PSP (Payment Service Providers) would prefer the PCI-DSS definition.
-
-\begin{tcolorbox}[colback=blue!10!white, colframe=blue!50!white]
-Watch out for you specific application field (risks and threats in that environment).
-\end{tcolorbox}
+In conclusion, an authentication (authN) technique can be regarded as strong or weak depending on the \textbf{attack model and the system properties}. For example, users of Internet banking services would probably prefer the ECB definition, while employees of PSP (Payment Service Providers) would prefer the PCI-DSS definition.
 
 \section{Challenge-Response Authentication}
 \begin{center}
     CRA - General Model
 \end{center}
 
-
 \begin{multicols}{2}
 \begin{itemize}
     \item The claimant tries to enter a system with his User ID.
-    \item The verifier sends a challenge to the claimant.
+    \item The verifier sends a challenge (should be a nonce, to avoid replay attacks) to the claimant.
     \item The claimant replies with the solution computed using some secret knowledge and the challenge.
     \item The verifier compares the response with a solution computed  via a secret associated to the claimant.
 \end{itemize}
@@ -388,11 +390,8 @@ Watch out for you specific application field (risks and threats in that environm
 
 \subsection*{CRA - General Issues}
 \begin{itemize}
-    \item The challenge must be non-repeatable to avoid replay attacks. Usually the challenge is a (random) nonce.
-    \item The function $f$ must be non-invertible (one-way function) otherwise, a listener can record the traffic and easily find the shared secret.
-    \[
-        if(\nexists f^{-1}) \text{ then } K_C = f^{-1} (response, challenge)
-    \]
+    \item The challenge must be non-repeatable to avoid replay attacks. Usually the challenge is a (random) nonce (replay attacks).
+    \item The function $f$ must be non-invertible (one-way function) otherwise, a listener can record the traffic and easily find the shared secret (sniffing attacks).
 \end{itemize}
 
 \subsection{Symmetric CRA}
@@ -505,6 +504,7 @@ Alice to Bob authentication:
 \begin{itemize}
     \item Mike creates a second connection by sending Alice's identifier $A$ and replaying ($\ne$ replying) the challenge $C_B$, which was received earlier from Bob.
     \item Bob replies with the encrypted challenge $C_B$(the previous one sent by Bob) and a new challenge $C_C$.
+    \item Mike reuses the first connection to send the encrypted challenge-response to Bob, ensuring the mutual authentication.
 \end{itemize}
 
 \subsubsection{Global System for Mobile Communications (in)Security}
@@ -517,7 +517,7 @@ GSM uses three secret algorithms:
     \item $A3$ for authentication (in the SIM).
     \item $A5$ (stream cipher) for encryption (in the mobile device).
 \end{itemize}
-This is security-through-obscurity \dots always a bad idea !
+This is security-through-obscurity\footnote{The algorithms are secret, rather than depending on robust secrutiy measures.}\dots always a bad idea !
 The three algorithms above are left to the choice of the MNO (Mobile Network Operator) and are not standardized.
 \begin{tcolorbox}[colback=blue!10!white, colframe=blue!50!white]
 $A8$ and $A3$ are usually built upon the COMP128 (secret) function.
@@ -551,7 +551,11 @@ $A8$ and $A3$ are usually built upon the COMP128 (secret) function.
 \end{itemize}
 
 \subsection{Asymmetric CRA}
-Claimant and Verifier have different secret keys. Both entities have a pair of keys: a public key and a private key. The public key is known to everyone, while the private key is known only to the owner.
+\begin{center}
+    Authentication based on public-key cryptography.
+
+    Remember that the PK certificate must be valid (not revoked) and trusted.
+\end{center}
 
 \begin{multicols}{2}
 
@@ -603,7 +607,7 @@ At the end, the Verifier checks if the received nonce is the same as the one sen
         \item The server computes the expected value of P48 in real-time using the shared secret $S_{UID}$, the counter, and a function $p$.
         
         \begin{itemize}
-            \item The function $p$ is a \textbf{keyed-digest} (key+data/counter) function (e.g., HMAC-SHA1).
+            \item The function $p$ is a \textbf{MAC} function (e.g., HMAC-SHA1). Which provides authentication and integrity for the data. Possible implementation: keyed-digest (e.g. HMAC).
         \end{itemize} 
     \end{itemize}
 
@@ -616,8 +620,9 @@ At the end, the Verifier checks if the received nonce is the same as the one sen
     \end{figure}
     
 \end{multicols}
-If the provided password  $P48_{UID}$  matches the server’s computed value  $p(48, S_{\text{UID}})$, the user is authenticated successfully.
+If the provided password  $P48_{UID}$  matches the server's computed value  $p(48, S_{\text{UID}})$, the user is authenticated successfully.
 
+\clearpage
 \subsection*{OTP - Analysis}
 \begin{itemize}
     \item The password is valid only for one run of the authentication protocol (Next run requires a new password).
@@ -646,7 +651,7 @@ On intelligent and secure/trusted workstation:
 
 First OTP definition and implementation by Bell Labs (1981). 
 \begin{itemize}
-    \item The user generates a secret $S_{ID}$ and a sequence of OTPs.
+    \item The user generates a secret $S_{ID}$ and a sequence of $n$ OTPs.
     \[
         \begin{aligned}
             &P_1 = h(S_{ID}) \\
@@ -697,9 +702,9 @@ First OTP definition and implementation by Bell Labs (1981).
 \begin{center}
     TOTP - General Model.
 \end{center}
-The password depends upon time (e.g. valid for 30 seconds) and the User-Verifier shared secret.
+The OTPs depend upon time (e.g. valid for 30 seconds) and the claimant's secret.
 \[
-    \boxed{p(K_{ID}, t)=h(S_{ID}, t)}
+    \boxed{OTP =h(S_{ID}, t)}
 \]
 $h$ : A cryptographic hash or HMAC (better) function used to generate the token.\\
 $t$: The current time (e.g., in seconds or milliseconds).
@@ -707,7 +712,7 @@ $t$: The current time (e.g., in seconds or milliseconds).
 
     \begin{itemize}
         \item The Verifier sends an authentication request to the user.
-        \item The Claimant sends his $ID$ and $X$ ($=p(text{ID}, t)$) to the Verifier. 
+        \item The Claimant sends his $ID$ and $X$ to the Verifier. 
         \item The Verifier also computes $X$, but using the stored information, and compares it with the received one.
     \end{itemize}
 \columnbreak
@@ -721,7 +726,6 @@ $t$: The current time (e.g., in seconds or milliseconds).
 
 \subsection*{Time-Based OTP - Analysis}
 \begin{itemize}
-    \item Requires local computation at the subscriber/claimant side.
     \item Requires clock synchronization or keeping track of time-shift for each subscriber.
     
     Desynchronization can be a cause to DDoS attacks or passwords stealing.
@@ -730,9 +734,9 @@ $t$: The current time (e.g., in seconds or milliseconds).
     Tolerance window for time-based authentication:
     \\\hspace*{1cm}(It ensures flexibility when verifying the validity of a time-based proof or token  X)
     \[
-        X==p(text{ID}, t) \quad \| \quad X == p(text{ID}, t-1) \quad \| \quad X == p(text{ID}, t+1)
+        X==p(\text{ID}, t) \quad \| \quad X == p(\text{ID}, t-1) \quad \| \quad X == p(\text{ID}, t+1)
     \]
-    \item Only one authentication run per time-slot (typically 30 seconds or 60s).
+    \item Only one OTP per time-slot (typically 30 seconds or 60s).
     \item Time attacks against subscribers and Verifier: For example, fake NTP (Network Time Protocol) server.
     \item Sensitive database at the Verifier side  (e.g. attack against RSA SecurID).
 \end{itemize}
@@ -745,7 +749,7 @@ Antennas can be used to synchronize the clocks of the devices.
     A concrete implementation of TOTP (Time-Based OTP).
 \end{center}
 \begin{itemize}
-    \item The Claimant sends to the Verifier in clear: user, PIN, token-code (seed + current time). The token-code can comprehend the PIN also (if an authenticator with pinpad is used).
+    \item The Claimant sends to the Verifier in clear: username, PIN, token-code (seed + current time). The token-code can comprehend the PIN also (if an authenticator with pinpad is used).
     \item Based on user and PIN the Verifier checks the token-code sent by the claimant against three possible time windows to account for clock drift:
     \begin{itemize}
         \item  $TC_{-1}$ : Token-code from the previous time window.
@@ -759,7 +763,7 @@ Antennas can be used to synchronize the clocks of the devices.
 The RSA SecurID system is composed of:
 \begin{itemize}
     \item Claimant: The user who wants to authenticate.
-    \item ACE Client: Installed on the Relying Party. Establishes the connection with the subscriber and forwards authentication information to the ACE server for verification.
+    \item ACE Client: Installed on the Relying Party. Establishes the connection with the claimant and forwards authentication information to the ACE server for verification.
     \item ACE Server: The core authentication verifier. Checks the validity of the SecurID token code, user credentials (PIN, etc.).
 \end{itemize}
 Left side of the figure \ref{fig:secarch} is a successful authentication, right side is a failed authentication.
@@ -775,21 +779,20 @@ Left side of the figure \ref{fig:secarch} is a successful authentication, right 
 \begin{center}
     Event-Based OTP - General Model.
 \end{center}
-The password depends upon the event (e.g. a button press) and the User-Verifier shared secret.
+The OTPs depend upon events (e.g. a button press) and the user's secret.
 \begin{itemize}
     \item Uses monotonic integer counter $C$ as input besides the seed.
     \[
-        p(\text{ID}, C)=h(S_{ID}, C) \quad \text{with } C \in \mathbb{Z} \land\text { monotonic}
+        \boxed{OTP = =h(S_{ID}, C)} \quad \text{with } C \in \mathbb{Z} \land\text { monotonic}
     \]
     \item Requires local computetion at the subscriber/claimant side.
-    \item Frequent authentication runs are possible.
     \item Because the counter is event-driven, the user can generate OTPs frequently without waiting for time slots (unlike time-based OTPs).
-    \item OTPs can be generated in advance because they depend only on the counter value and the seed:
+    \item OTPs can be generated in advance because they depend only on the counter value:
     \begin{itemize}
-        \item Useful for travel: Users can carry pre-computed OTPs to avoid losing access (e.g., when they don’t have their token).
+        \item Useful for travel: Users can carry pre-computed OTPs to avoid losing access (e.g., when they don't have their token).
         \item Security Risk: An adversary with temporary access to the authenticator can pre-compute OTPs, increasing the risk of misuse.
     \end{itemize}
-    \item The counter on the user’s device (subscriber) may become out of sync with the verifier (e.g. manual increments) so, the verifier must accommodate desynchronization by checking a range of counter values:
+    \item The counter on the user's device (subscriber) may become out of sync with the verifier (e.g. manual increments) so, the verifier must accommodate desynchronization by checking a range of counter values:
     \[
 X == p(\text{ID}, C) \, \| \, X == p(\text{ID}, C+1) \, \| \, X == p(\text{ID},C+2) \, \| \, \dots
     \]
@@ -847,6 +850,8 @@ How to authenticate a human being? The most common methods are:
 \subsection{Biometric Systems}
 \begin{center}
     Identification, not only authentication.
+
+    \textcolor{Red}{NOT REPLACEABLE}, to be used locally.
 \end{center}
 Consists of a measure of a user's biological characteristic. The most common biometric techniques are: 
 \begin{itemize}
@@ -889,7 +894,7 @@ FAR and FRR may be partly tuned, but they heavily depend on the cost of the syst
 
 \section{Kerberos}
 \begin{center}
-    Authentication System based on TTP (Trusted Third Party).
+    Authentication System based on symmetric cryptography.
 \end{center}
 
 
@@ -901,11 +906,10 @@ FAR and FRR may be partly tuned, but they heavily depend on the cost of the syst
         Some key features:
     \end{center}
     \begin{itemize}
-        \item Useful for non-HTTTP services.
+        \item Useful for non-HTTP services.
         \item The TTP (Trusted Third Party) substitutes the Verifier.
-        \item User's passwords are never transmitted but only used locally as (symmetric) cryptographic keys.
-        \item Client authentication is compulsory (however, server authN is optional).
-        \item Does not use Asymmetric Cryptography.
+        \item \textbf{Client (peer) authentication is compulsory} (however, server authN is optional).
+        \item The original version does not require Asymmetric Cryptography.
     \end{itemize}
 \columnbreak
 
@@ -918,7 +922,7 @@ FAR and FRR may be partly tuned, but they heavily depend on the cost of the syst
     \[
         \text{user.instance@REALM}
     \]
-    \item Ticket: A data structure used to authenticate a client to a server. It is encrypted with the symmetric key of the target server and is bound to the client’s IP address. The ticket is associated with only one credential.
+    \item Ticket: A data structure used to authenticate a client to a server. It is encrypted with the symmetric key of the target server and is bound to the client's IP address.
 
 \end{itemize}
 \end{multicols}
@@ -929,30 +933,27 @@ FAR and FRR may be partly tuned, but they heavily depend on the cost of the syst
 
 
 \begin{multicols}{3}
+    \raggedcolumns
 
-    The Authentication Server 
-    \hspace*{2.5cm}(AS)
-
+\textbf{Authentication Server}
+\hspace*{2.5cm}(AS)
 \begin{itemize}
-    \item The subscriber's credentials, used to derive a AS-Client session key.
-    \item Each Ticket Granting Server, and their symmetric keys.
-    \item Provides the client with a Ticket Granting Ticket (readable only by the TGS).
+    \item Authenticates implicitly the client (transmitting messages using the client's shared secret).
+    \item Provides the client with a ticket for the Ticket Granting Server.
 \end{itemize}
 \columnbreak
 
-The Ticket Granting Server 
+\textbf{Ticket Granting Server}
 \hspace*{2.5cm}(TGS)
 \begin{itemize}
-    \item The Application Servers IDs, and their symmetric keys.
-    \item Provides the client with a Service Ticket (readable only by the server).
-    \item Uses a symmetric session key, generated by the AS, to communicate with the client.
+    \item Provides the client with a Service Ticket.
 \end{itemize}
 \columnbreak
 
-The (Application) Server
+\textbf{(Application) Server}
+\hspace*{2.5cm}(S)
 \begin{itemize}
     \item Checks the Service Ticket and grants access to the client.
-    \item Uses a symmetric session key, generated by the TGS, to communicate with the client.
 \end{itemize}
 \end{multicols}
 
@@ -974,20 +975,21 @@ The three components act as a trusted third parties. Each entity has a symmetric
     \item The client sends a request to the Authentication Server (AS) to authenticate his identity and specifying the Ticket Granting Server (TGS).
     \item The AS:
     \begin{itemize}
-        \item Derives a symmetric key ("Session Key") $K_{\text{UID}}$ from the user's credential, in order to communicate with the TGS (Ticket Granting Server).
-        \[\text{The Session Key } K_{\text{UID}} \text{ binds both Client and TGS}\]
-        \item Issues a Ticket Granting Ticket (TGT) \underline{encrypted} with $K_{\text{TGS}}$.
-        \[K_{\text{TGS}} \text{ is the AS-TGS symmetric key}\]
+        \item Issues a Ticket Granting Ticket (TGT).
+        \item Encrypts the communication with the client using the client's secret key (client authentication is mandatory!).
 \end{itemize}
     \item The TGT is presented to the TGS (including an authenticator also, to prevent replay attacks) to request access to a specific service.
     \item The TGS:
     \begin{itemize}
-        \item Issues a Service Ticket ("Access Token") $T_S$ \underline{encrypted} with $K_S$. 
-        \[K_S \text{ is the TGS-Server symmetric key}\]
-        \item The client presents the Service Ticket $T_S$ to the application server to access the desired service.
+        \item Issues a Service Ticket ("Access Token")
     \end{itemize} 
-    \item If the Service Ticket $T_S$ is valid, the application server grants access.
+    \item The client presents the authenticator and the Service Ticket $T_S$ to the application server to access the desired service.
+    \begin{itemize}
+        \item If the Service Ticket $T_S$ is valid, the application server grants access.
+    \end{itemize}
 \end{itemize}
+
+Each server creates a session key to let the client and the "next" server communicate securely.
 
 
 \begin{multicols}{2}
@@ -1011,7 +1013,9 @@ The three components act as a trusted third parties. Each entity has a symmetric
 The servers must be very-well protected.
 \end{tcolorbox}
 
-\subsection*{Kerberos - Data Formats (v4)}
+\clearpage
+
+\subsection*{Kerberos - Authenticator and Ticket Data Structure (v4)}
 The data structures used in Kerberos v4 are:
 \begin{figure}[H]
     \centering
@@ -1019,7 +1023,7 @@ The data structures used in Kerberos v4 are:
     \caption{Kerberos Data Formats (v4)}
 \end{figure}
 
-\subsection*{Kerberos - TGT request}
+\subsection*{Kerberos - TGT request (Client Authentication)}
 \begin{center}
     Ticket Granting Ticket request process.
 \end{center}
@@ -1037,7 +1041,7 @@ The client requests a Ticket Granting Ticket (TGT) from the Authentication Serve
         \item A Ticket Granting Ticket (TGT)  $T_{\text{C,TGS}}$ \underline{encrypted} with the specific TGS's secret key $K_{\text{TGS}}$, so only the TGS can verify it.
         
         \begin{center}
-            Both the session key and the encrypted TGT are sent to the client \underline{encrypted} with the client's secret key $K_{\text{C}}$.
+            Both the session key and the encrypted TGT are sent to the client \underline{encrypted} with the client's secret key $K_{\text{C}}$ (client peer authentication is mandatory).
         \end{center}
     \end{enumerate}
 \end{itemize}
@@ -1078,23 +1082,29 @@ Intro: The client requests a Service Ticket from the Ticket Granting Server (TGS
 \subsection*{Kerberos - Service Ticket use}
 
 Intro: The Client tries to use the Service Ticket to access the desired service.
-\begin{itemize}
-    \item The Client sends:
-    \begin{enumerate}
-        \item The Service Ticket $T_{\text{C,S}}$ encrypted with the Server's secret key $K_{\text{S}}$.
-        \item The Authenticator $A_C$ (preventing replay attacks), \underline{encrypted} with the Client-Server session key $K_{\text{C,S}}$.
-    \end{enumerate}
-    \item The Server responds by:
+
+
+\begin{multicols}{2}
     \begin{itemize}
-        \item Sending the specific time ($timestamp(A_C)$) at which the Authenticator $A_C$ was created, encrypted with the Client-Server session key $K_{\text{C,S}}$.
+        \item The Client sends:
+        \begin{enumerate}
+            \item The Service Ticket $T_{\text{C,S}}$ encrypted with the Server's secret key $K_{\text{S}}$.
+            \item The Authenticator $A_C$ (preventing replay attacks), \underline{encrypted} with the Client-Server session key $K_{\text{C,S}}$.
+        \end{enumerate}
+        \item The Server responds by:
+        \begin{itemize}
+            \item Sending ($timestamp(A_C) + 1$) encrypted with the Client-Server session key $K_{\text{C,S}}$.
+        \end{itemize}
     \end{itemize}
-\end{itemize}
+
+\columnbreak
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\linewidth]{Images/Authentication/kerticketuse.png}
+    \includegraphics[width=\linewidth]{Images/Authentication/kerticketuse.png}
     \caption{Kerberos Ticket Use}
 \end{figure}
+\end{multicols}
 
 \subsection*{Kerberos - Versions and Usage}
 \begin{itemize}
@@ -1122,16 +1132,17 @@ Key features:
     \item Algorithm flexibility:
     \begin{itemize}
         \item Client and servers may support different algorithms.
-        \item Originally used DES-CRC32, then 3DES, RC4, AES, Camellia and MD4, MD5.
+        \item Originally used DES-CRC32, then 3DES, AES and MD4, MD5.
     \end{itemize}
     \item Pre-authentication to prevent password enumeration or dictionary attacks on the TGT.
     \item Support for asymmetric crypto (only for \texttt{AS\_REQ})
 \end{itemize}
 
+\clearpage
 \subsubsection*{Kerberos v5 - Public Key Cryptography for Initial Authentication in Kerberos.}
 \begin{center}
     TGT request with PKINIT.
-    \\ Asymmetric encryption used only for the initial authentication with the Authentication Server.
+    \\ Asymmetric encryption used only for the initial  authentication with the AS.
     \\The AS knows the client ID and its public key.
 \end{center}
 Intro: The client tries to authenticate itself to the Authentication Server (AS) using public key cryptography.
@@ -1286,14 +1297,14 @@ Secure authentication flow for a user logging into a website, typically with a F
 \begin{multicols}{2}
 
     \begin{enumerate}
-        \item The user initiates the login process on a website (SITE.COM) by entering their username (e.g., “BOB”).
+        \item The user initiates the login process on a website (SITE.COM) by entering its username (e.g., “BOB”) and password.
 
-        A login challenge is generated and sent to the user’s device or authentication system.
+        If the ID and pwd are valid, a login challenge is generated and sent to the user's device or authentication system.
         \item The user approves the login request (e.g., by tapping a button, scanning a fingerprint, or entering a PIN).
         \item Upon user approval, the FIDO device selects the private key associated with the website (SITE.COM) and uses it to sign the login challenge.
         
         The signed login response is sent back to the website.
-        \item The website verifies the signature using the user’s public key, which was securely stored during registration.
+        \item The website verifies the signature using the user's public key, which was securely stored during registration.
     \end{enumerate}
     \columnbreak
 
@@ -1307,7 +1318,7 @@ Secure authentication flow for a user logging into a website, typically with a F
 If the signature is valid, the website completes the login process, granting access to “BOB.”
 \clearpage
 \subsection*{FIDO - Universal Second Factor Registration Process}
-The flow involves securely generating and exchanging public/private key pairs to enable strong, passwordless, or two-factor authentication.
+The flow involves securely generating and exchanging public/private key pairs to enable strong, biometric authentication (passwordless), or two-factor authentication.
 \begin{multicols}{2}
 
     \begin{enumerate}
@@ -1327,6 +1338,9 @@ The flow involves securely generating and exchanging public/private key pairs to
 \end{multicols}
 
 \subsection*{FIDO - Universal Second Factor Authentication}
+\begin{center}
+    Secure authentication using asymmetric CRA.
+\end{center}
 
 \begin{multicols}{2}
 
@@ -1365,7 +1379,7 @@ If the signature matches, the authentication is successful.
     \item \textbf{Strong authentication}: Achieved using asymmetric cryptography (public/private key pairs).
     \item \textbf{No third parties involved}: The authentication process occurs directly between the user and the relying party.
     \item \textbf{No secrets on the server side}: The server does not store any sensitive secrets, only public keys.
-    \item \textbf{Biometric data}: If biometrics are used, they never leave the user’s device and remain local.
+    \item \textbf{Biometric data}: If biometrics are used, they never leave the user's device and remain local.
     \item \textbf{No phishing}: Authentication responses cannot be reused because they are signatures over multiple data points, including the Relying Party's identity.
     \item \textbf{Unlinkability}: A new key pair is generated for every registration. This ensures no linkability between different services used by the same user or different accounts owned by the same user.
     \item \textbf{No key storage limits}: Private keys are not stored in the authenticator but are dynamically recomputed as needed based on an internal secret and the Relying Party's identity.
@@ -1382,7 +1396,7 @@ Attestation ensures the legitimacy of an authenticator by verifying its integrit
 \begin{itemize}
     \item Packed Attestation: Authenticators with limited resources, like a Secure Element (SE).
     \item TPM Attestation: Uses a Trusted Platform Module (TPM), a secure cryptographic processor for authentication.
-    \item Android Key Attestation: Uses Android’s secure key storage (introduced in Android Nougat) for authentication.
+    \item Android Key Attestation: Uses Android's secure key storage (introduced in Android Nougat) for authentication.
     \item Android SafetyNet Attestation: Uses the SafetyNet API to verify the security status of Android devices.
     \item Future Extension for IoT: FIDO 2.0 is being extended to include authentication for IoT devices to improve security in the IoT ecosystem.
 \end{itemize}

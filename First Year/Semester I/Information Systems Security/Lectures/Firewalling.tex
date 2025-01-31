@@ -2,7 +2,7 @@
 \cite{05_Firewalling}
 
 \section*{What is a Firewall?}
-Literally, a firewall is a ‘wall to protect against fire propagation’ (a safety feature designed to compartmentalize fire and limit damage). In the context of computer networks, it guarantees a controlled connection between networks at different security levels, serving as boundary protection and a network filter.
+Literally, a firewall is a ‘wall to protect against fire propagation' (a safety feature designed to compartmentalize fire and limit damage). In the context of computer networks, it guarantees a controlled connection between networks at different security levels, serving as boundary protection and a network filter.
 
 \section{Ingress vs. Egress Firewall}
 \begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=Beware]
@@ -22,7 +22,7 @@ Literally, a firewall is a ‘wall to protect against fire propagation’ (a saf
 \end{itemize}
 
 \begin{tcolorbox}[colback=blue!10!white, colframe=blue!50!white, title=Classification of Traffic]
-    It’s straightforward to classify traffic for \textbf{channel-based services} (e.g., TCP applications), but more challenging for \textbf{message-based stateless services} (e.g., ICMP, UDP applications), due to their lack of a consistent connection state.
+    It's straightforward to classify traffic for \textbf{channel-based services} (e.g., TCP applications), but more challenging for \textbf{message-based stateless services} (e.g., ICMP, UDP applications), due to their lack of a consistent connection state.
 \end{tcolorbox}
 
 \section{Three Commandments of Firewall}
@@ -35,7 +35,7 @@ Literally, a firewall is a ‘wall to protect against fire propagation’ (a saf
 \end{center}
 
 \begin{center}
-    3. The firewall must be a highly secure system.
+    3. The firewall itself must be a highly secure system.
 \end{center}
 
 \emph{-- D. Cheswick and S. Bellovin}
@@ -71,15 +71,15 @@ The Firewall is a system! With several components.
     \item \textbf{Packet filter / screening router / choke}: A component that filters traffic at the network level.
     \item \textbf{Bastion host}: A secure system with auditing.
     \item \textbf{Application gateway (proxy)}: A service that works on behalf of an application, with access control.
-    \item \textbf{Dual-homed gateway}: A system with two network cards and routing disabled (ip-forwarding off).
+    \item \textbf{Dual-homed gateway}: A system with two network cards and routing disabled (ip-forwarding off, so can work as a firewall).
 \end{itemize}
 
 \begin{tcolorbox}[colback=blue!10!white, colframe=blue!50!white, title=What is a Proxy]
-    A proxy is a system or service that sits between the client and the application server. It intercepts and controls the traffic between the two, often for purposes such as filtering, caching, security, or access control. A proxy is not inherently a firewall, but it can function in a way similar to a firewall depending on its role and how it’s configured.
+    A proxy is a system or service that sits between the client and the application server. It intercepts and controls the traffic between the two, often for purposes such as filtering, caching, security, or access control. A proxy is not inherently a firewall, but it can function in a way similar to a firewall depending on its role and how it's configured.
 \end{tcolorbox}
 
 \section{Control Mechanisms for each Level}
-To provide a clear and structured explanation of the different controls at various network levels, here’s an overview of each control type along with a comparison of how they differ in terms of:
+To provide a clear and structured explanation of the different controls at various network levels, here's an overview of each control type along with a comparison of how they differ in terms of:
 \begin{itemize}
     \item Controls to be performed (i.e., threats detected).
     \item Performance.
@@ -96,9 +96,13 @@ To provide a clear and structured explanation of the different controls at vario
     \item Application-level gateway / proxy.
     \item Stateful inspection.
 \end{itemize}
+\begin{tcolorbox}[colback=blue!10!white, colframe=blue!50!white, title=Accuracy of a Firewall]
+More a firewall operates at a high level, the more accurate (specific) it is in detecting threats. However, this comes at the cost of performance and complexity.
+\end{tcolorbox}
 
 \begin{figure}[H]
-  \includegraphics[width=\linewidth]{Images/Firewalling/levels.png}
+    \centering
+  \includegraphics[width=0.5\linewidth]{Images/Firewalling/levels.png}
   \caption{Controls for each level.}
 \end{figure}
 
@@ -279,18 +283,17 @@ The large use of web applications leads to an increase in threats targeting them
         \item Includes the \textbf{OWASP ModSecurity Core Rule Set (CRS)} to protect against a wide range of attacks.
     \end{itemize}
 \end{itemize}
-
+\clearpage
 \section{Firewall Architectures}
 \subsection{Packet Filter}
-Control the flow of traffic between networks or network segments. It operates at the network layer (Layer 3) inspecting each packet’s header and making decisions based on predefined filtering rules. The architecture of a packet filter is designed to act as a firewall that filters traffic based on IP addresses, protocols, ports, and other packet header attributes, without inspecting the payload data.
+Control the flow of traffic between networks or network segments. It operates at the network layer (Layer 3) inspecting each packet's header and making decisions based on predefined filtering rules. The architecture of a packet filter is designed to act as a firewall that filters traffic based on IP addresses, protocols, ports, and other packet header attributes, without inspecting the payload data.
 
 \begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=Beware]
-    Simple, cost-effective, but... insecure!
+    Simple, cheap, but... insecure! Because is a single point of failure.
 \end{tcolorbox}
 
 \begin{itemize}
     \item Exploits the packet filter to screen traffic at both the IP and upper layers.
-    \item The Packet Filter element represents a single point of failure.
     \item If implemented with a router, it becomes a "screening router," eliminating the need for additional dedicated hardware.
     \item No need for a proxy, thus no modification of applications is required.
 \end{itemize}
@@ -302,23 +305,28 @@ Control the flow of traffic between networks or network segments. It operates at
 \end{figure}
 
 \subsection{Dual-homed Gateway}
-A Dual-Homed Gateway uses a bastion host with two NICs (Network Interface Cards) to connect to two different networks, typically a trusted internal network and an untrusted external network (such as the internet). This configuration provides a layer of security by isolating and controlling the communication between the two networks.
+A Dual-Homed Gateway uses a bastion host with two NICs (Network Interface Cards) to connect two different networks, typically a trusted internal network and an untrusted external network (such as the internet). 
 
-\begin{itemize}
-    \item Easy to implement.
-    \item Small additional hardware requirements.
-    \item The internal network can be masqueraded.
-    \item Inflexible: The packet filter cannot easily adapt to changing network requirements or policies, and it does not provide much flexibility in managing traffic.
-    \item High work overhead.
-    \item The border router performs an initial screening of the traffic.
-    \item The bastion host (gateway) could become a bottleneck, reducing the overall performance of the system.
-\end{itemize}
+\begin{multicols}{2}
+
+    \begin{itemize}
+        \item The internal network can be masqueraded.
+        \item High work overhead.
+        \item The border router (PF) performs an initial screening of the traffic.
+        \item The bastion host (gateway) could become a bottleneck if there's a high work load, reducing the overall performance of the system.
+        \item Avoided the problem of the single point of failure.
+        \item Higher complexity in devices.
+    \end{itemize}
+    
+
+\columnbreak
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\linewidth]{Images/Firewalling/dual_homed_gateway.png}
+    \includegraphics[width=\linewidth]{Images/Firewalling/dual_homed_gateway.png}
     \caption{Dual-homed gateway architecture.}
 \end{figure}
+\end{multicols}
 
 \subsection{Screened Host}
 Uses two primary components: a router and a bastion host. This setup aims to provide enhanced security by controlling the flow of traffic between the internal and external networks. Below are the characteristics and key features of this architecture:
@@ -327,8 +335,8 @@ Uses two primary components: a router and a bastion host. This setup aims to pro
     \item Router:
     \begin{itemize}
         \item Acts as a filtering device between the internal (INT) and external (EXT) networks.
-        \item Blocks traffic from internal to external networks (INT > EXT) unless the traffic is coming from the bastion host.
-        \item Blocks traffic from external to internal networks (EXT > INT) unless it is directed towards the bastion host.
+        \item \textbf{Blocks traffic from internal to external networks (INT > EXT) unless the traffic is coming from the bastion host.}
+        \item \textbf{Blocks traffic from external to internal networks (EXT > INT) unless it is directed towards the bastion host.}
         \item Exceptions: The router allows traffic for directly enabled services, meaning services that are explicitly allowed (e.g., HTTP, DNS) can pass through based on predefined rules.
     \end{itemize}
     \item Bastion Host:
@@ -337,19 +345,26 @@ Uses two primary components: a router and a bastion host. This setup aims to pro
         \item Controls access to the authorized services (e.g., web servers, FTP servers) by inspecting and filtering traffic at a deeper level.
         \item Ensures that only legitimate services are accessible to the external network, protecting the internal network from unauthorized access.
     \end{itemize}
-    \item Pros and Cons:
-    \begin{itemize}
-        \item More Expensive and Complex to Manage: The setup is more complex because it involves managing two systems (router + bastion host), which increases both the cost and administrative overhead.
-        \item More Flexible: The architecture offers flexibility because it allows skipping control over some services or hosts. For example, some services may bypass the bastion host if specifically configured to do so, making it easier to manage certain use cases.
-        \item Limited Masking: Only the hosts and protocols that go through the bastion host can be masked for security (such as hiding internal IP addresses or data). However, if the packet filter (PF) uses NAT (Network Address Translation), it can mask additional traffic and hide internal network details.
-    \end{itemize}
+    
 \end{itemize}
+
+\begin{multicols}{2}
+    Pros and Cons:
+    \begin{itemize}
+        \item More Expensive and Complex to Manage: The setup is more complex because it involves managing two systems (router + bastion host).
+        \item If the packet filter (PF) uses NAT (Network Address Translation), it can mask additional traffic and hide internal network details.
+    \end{itemize}
+
+\columnbreak
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\linewidth]{Images/Firewalling/screened_host.png}
+    \includegraphics[width=\linewidth]{Images/Firewalling/screened_host.png}
     \caption{Screened host architecture.}
 \end{figure}
+\end{multicols}
+
+\clearpage
 
 \subsection{Screened Subnet}
 \textcolor{blue}{The most secure solution}, however very complex and expensive. Creates a buffer zone between an internal network and an external network (such as the internet). The screened subnet typically involves two firewalls and a DMZ (Demilitarized Zone) to filter and control the flow of data between the internal network and external network. This setup ensures that external entities can access certain resources without directly exposing the internal network, providing an additional layer of security.
@@ -374,26 +389,32 @@ The two packet filters should not have the same implementation (i.e., they shoul
 
 \subsection{Screened Subnet V2}
 \begin{center}
-    (AKA Three-Legged Firewall)
+    (AKA Three-Legged Firewall, cheaper but still presents a single point of failure.)
 \end{center}
 
-\noindent In this version of the \textbf{Screened Subnet} architecture, the \textbf{packet filter (PF)} and \textbf{gateway (GW)} functions are often combined into a single device. This version is cheaper but still presents a single point of failure.
+\noindent In this version of the \textbf{Screened Subnet} architecture, the \textbf{packet filters (PFs)} are omitted, and incorporated into the \textbf{gateway (GW)}. 
 
-\hfill 
 
 \noindent\textbf{Three-Legged Design}: This setup involves a firewall device with three network interfaces.
-\begin{itemize}
-    \item One interface connecting to the \textbf{external network} (untrusted),
-    \item One interface connecting to the \textbf{internal network} (trusted),
-    \item One interface connecting to the \textbf{DMZ} (where public-facing services reside).
-\end{itemize}
 
+\begin{multicols}{2}
+
+    
+    \begin{itemize}
+        \item One interface connecting to the \textbf{external network} (untrusted),
+        \item One interface connecting to the \textbf{internal network} (trusted),
+        \item One interface connecting to the \textbf{DMZ}.
+    \end{itemize}
+\columnbreak
+
+    
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\linewidth]{Images/Firewalling/screened_subnet_v2.png}
+    \includegraphics[width=\linewidth]{Images/Firewalling/screened_subnet_v2.png}
     \caption{Three-legged architecture.}
 \end{figure}
 
+\end{multicols}
 
 
 
@@ -416,7 +437,7 @@ Personal \rightarrowtail User\ Device
 \]
 Key points:
 \begin{itemize}
-    \item Differs from network firewalls, which are typically installed at the network perimeter. In fact, my limit the processes that are permitted:
+    \item Differs from network firewalls, which are typically installed at the network perimeter. In fact, may limit the processes that are permitted:
     \begin{itemize}
         \item It can limit processes opening network channels (acting as a client).
         \item It can limit processes answering network requests (acting as a server).
@@ -430,7 +451,7 @@ Key points:
 \end{itemize}
 
 \begin{tcolorbox}[colback=red!10!white, colframe=red!70!black, coltitle=white, title=Beware]
-    For the firewall to remain effective, its management must be separate from system management. This separation prevents unauthorized users or processes from tampering with firewall settings.
+    For the firewall to remain effective, its management must be independent of system management. This separation ensures that unauthorized users or processes cannot tamper with the firewall settings.
 \end{tcolorbox}
 
 \begin{figure}[H]
@@ -574,7 +595,7 @@ Dangerous! IPS systems can erroneously block or allow traffic, potentially causi
 \end{tcolorbox}
 
 \begin{itemize}
-    \item An IPS is not just a standalone product; it’s a technology that can be integrated into the overall security infrastructure to provide real-time detection and mitigation of attacks.
+    \item An IPS is not just a standalone product; it's a technology that can be integrated into the overall security infrastructure to provide real-time detection and mitigation of attacks.
     \item Many modern security systems integrate IDS and IPS into a single product known as IDPS (Intrusion Detection and Prevention System).
 \end{itemize}
 
